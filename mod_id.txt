@@ -1,1 +1,1 @@
-noita-mod-template
+noita-remover

@@ -1,7 +1,6 @@
-# Noita MOD Template
+# Remove Spells
 
-NoitaMOD制作用のテンプレートリポジトリです。
-`noita-mod-template`を開発MOD名に変更してください。
+スペルを世界から消し去るためのMOD
 
 ## LICENSE
 

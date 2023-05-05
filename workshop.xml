@@ -1,5 +1,5 @@
 <Mod
-	name="noita-mod-template"
+	name="noita-remover"
   tags=""
   dont_upload_folders="resources"
   dont_upload_files=".editorconfig"
