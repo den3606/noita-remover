@@ -21,13 +21,24 @@ function NewID()
   return global_gui_id
 end
 
+-- HACK: 画像とボタンテキストを重ねて設置している
+-- 各言語によってスペースの扱い勝ちが言うので、調整が必要
 function GuiToggleImageButton(gui, image_id, button_id, icon_path, state_name, active_fn, deactive_fn)
   local w, h = GuiGetImageDimensions(gui, icon_path, 1)
 
   local blank = ''
-  for i = 0, math.floor(w / 2) do
-    blank = blank .. ' '
+
+  if GameTextGet("$current_language") == "English" then
+    for i = 0, math.floor(w / 4) do
+      blank = blank .. ' '
+    end
   end
+  if GameTextGet("$current_language") == "日本語" then
+    for i = 0, math.floor(w / 2) do
+      blank = blank .. ' '
+    end
+  end
+
 
   local is_active = ModSettingGet(state_name) or false
 
