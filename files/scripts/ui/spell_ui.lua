@@ -1,66 +1,77 @@
+dofile_once("mods/noita-remover/files/scripts/ui/gui_utils.lua")
+dofile("data/scripts/gun/gun_actions.lua")
+local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
+
+local scroll_container_id = NewID()
+local remove_all_spell_button_id = NewID()
+local add_all_spell_button_id = NewID()
+
+local spell_gui_rows = {}
+local spell_row = {}
+
+for i = 1, #actions do
+  table.insert(spell_row, {
+    key = VALUES.MOD_NAME .. actions[i].id,
+    image_id = NewID(),
+    button_id = NewID(),
+    icon_path = actions[i].sprite,
+    state_name = VALUES.MOD_NAME .. actions[i].sprite,
+    active_fn = function()
+      ModSettingSet(VALUES.MOD_NAME .. actions[i].id, true)
+    end,
+    deactive_fn = function()
+      ModSettingSet(VALUES.MOD_NAME .. actions[i].id, false)
+    end,
+  })
+  if i % 6 == 0 then
+    table.insert(spell_gui_rows, spell_row)
+    spell_row = {}
+  end
+end
+-- 最後に割り切れなかったspellsを挿入する
+table.insert(spell_gui_rows, spell_row)
+
+
+local function spell_icon(gui)
+  for _, row in ipairs(spell_gui_rows) do
+    GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
+
+    for _, spell in ipairs(row) do
+      GuiToggleImageButton(gui, spell.image_id, spell.button_id, spell.icon_path, spell.state_name,
+        spell.active_fn, spell.deactive_fn)
+    end
+
+    GuiLayoutEnd(gui)
+  end
+end
+
 local function start(gui)
-  dofile_once("mods/noita-remover/files/scripts/ui/gui_utils.lua")
-  dofile_once("data/scripts/perks/perk_list.lua")
-
-  local screen_width, screen_height = GuiGetScreenDimensions(gui)
-  local im_id = 1344314343324224231
-
   GuiLayoutBeginLayer(gui)
-  -- GuiBeginAutoBox(gui)
-  -- GuiZSet(gui, 10)
-  -- GuiZSetForNextWidget(gui, 11)
-  -- GuiText(gui, 50, 50, "Gui*AutoBox*")
-  -- GuiImage(gui, im_id, 60, 60, "data/ui_gfx/game_over_menu/game_over.png", 1, 1, 0)
-  -- GuiZSetForNextWidget(gui, 13)
-  -- GuiImage(gui, im_id, 60, 150, "data/ui_gfx/game_over_menu/game_over.png", 1, 1, 0, math.pi)
-  -- GuiZSetForNextWidget(gui, 12)
-  -- GuiEndAutoBoxNinePiece(gui)
-
-  -- GuiZSetForNextWidget(gui, 11)
-  -- GuiImageNinePiece(gui, 12368912341, 10, 10, 80, 20)
-  -- GuiText(gui, 15, 15, "GuiImageNinePiece")
-
-  --[[
-      right
-    ]]
-  GuiBeginScrollContainer(gui, 34511, 500, 42, 125, 278)
+  GuiBeginScrollContainer(gui, scroll_container_id, 500, 42, 125, 278)
   GuiLayoutBeginVertical(gui, 0, 0)
+
+  -- In Box rendering
   GuiText(gui, 0, 0, "Spell Ban List")
-  GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
-
-  if GuiButton(gui, im_id + 123222, 0, 3, '        ') then
-    remove3 = not remove3
+  GuiText(gui, 0, 0, "=========================")
+  if GuiButton(gui, remove_all_spell_button_id, 0, 0, "Ban All spells") then
+    for _, row in ipairs(spell_gui_rows) do
+      for _, spell in ipairs(row) do
+        ModSettingSet(spell.state_name, true)
+        ModSettingSet(spell.key, true)
+      end
+    end
   end
-  if remove3 then
-    GuiImage(gui, im_id + 1321312332, -16, 0, perk_list[1].perk_icon, 1, 1)
-  else
-    GuiImage(gui, im_id + 1321312332, -16, 0, perk_list[1].perk_icon, 0.3, 1)
+  if GuiButton(gui, add_all_spell_button_id, 0, 0, "Unban All spells") then
+    for _, row in ipairs(spell_gui_rows) do
+      for _, spell in ipairs(row) do
+        ModSettingSet(spell.state_name, false)
+        ModSettingSet(spell.key, false)
+      end
+    end
   end
-
-
-
-  local w, h = GuiGetImageDimensions(gui, perk_list[1].perk_icon, 1)
-
-  local blank = ''
-  for i = 0, math.floor(w / 2) do
-    blank = blank .. ' '
-  end
-
-  local button_id = 213
-  local image_id = 3213
-  if GuiButton(gui, button_id, 0, h / 4, blank) then
-    remove4 = not remove4
-  end
-  if remove4 then
-    GuiImage(gui, image_id, -16, 0, perk_list[1].perk_icon, 1, 1)
-  else
-    GuiImage(gui, image_id, -16, 0, perk_list[1].perk_icon, 0.3, 1)
-  end
-
+  spell_icon(gui)
 
   GuiLayoutEnd(gui)
-  GuiImage(gui, im_id, 60, 150, "data/ui_gfx/game_over_menu/game_over.png", 1, 1, 0, math.pi)
-  GuiImage(gui, im_id, 60, 150, "data/ui_gfx/game_over_menu/game_over.png", 1, 1, 0, math.pi)
   GuiEndScrollContainer(gui)
   GuiLayoutEndLayer(gui)
 end
