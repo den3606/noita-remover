@@ -1,6 +1,6 @@
 # Remove Spells
 
-スペルを世界から消し去るためのMOD
+パークとスペルを世界から消し去るためのMOD
 
 ## LICENSE
 
