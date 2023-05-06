@@ -1,4 +1,7 @@
 dofile("data/scripts/lib/mod_settings.lua")
+dofile("data/scripts/perks/perk_list.lua")
+dofile("data/scripts/gun/gun_actions.lua")
+
 
 local function description()
   local noita_remover_description_en = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
@@ -76,6 +79,37 @@ local date = tonumber(tostring(year) ..
 math.randomseed(date)
 
 ---------------------------------------------------------
+
+---------------------------------------------------------
+-- BannedCount
+-- element: perk or spell
+
+local perk_ban_count = 0
+local spell_ban_count = 0
+
+local function ban_count()
+  perk_ban_count = 0
+  for i = #perk_list, 1, -1 do
+    local spell = perk_list[i]
+
+    if ModSettingGet(VALUES.MOD_NAME .. spell.id) or false then
+      perk_ban_count = perk_ban_count + 1
+    end
+  end
+
+  spell_ban_count = 0
+  for i = #actions, 1, -1 do
+    local spell = actions[i]
+
+    if ModSettingGet(VALUES.MOD_NAME .. spell.id) or false then
+      spell_ban_count = spell_ban_count + 1
+    end
+  end
+end
+ban_count()
+---------------------------------------------------------
+
+
 -- gui_utils.lua
 function StringToNumber(str)
   local num = 0
@@ -143,7 +177,6 @@ end
 
 ---------------------------------------------------------
 -- perk_ui.lua
-dofile_once("data/scripts/perks/perk_list.lua")
 
 local perk_scroll_container_id = NewID()
 local remove_all_perk_button_id = NewID()
@@ -162,9 +195,11 @@ for i = 1, #perk_list do
     state_name = VALUES.MOD_NAME .. perk_list[i].perk_icon,
     banned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. perk_list[i].id, true)
+      ban_count()
     end,
     unbanned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. perk_list[i].id, false)
+      ban_count()
     end,
   })
   if i % 6 == 0 then
@@ -193,7 +228,6 @@ end
 
 ---------------------------------------------------------
 -- spell_ui.lua
-dofile("data/scripts/gun/gun_actions.lua")
 
 local spell_scroll_container_id = NewID()
 local remove_all_spell_button_id = NewID()
@@ -212,9 +246,11 @@ for i = 1, #actions do
     state_name = VALUES.MOD_NAME .. actions[i].sprite,
     banned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. actions[i].id, true)
+      ban_count()
     end,
     unbanned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. actions[i].id, false)
+      ban_count()
     end,
   })
   if i % 6 == 0 then
@@ -260,6 +296,7 @@ function ModSettingsGui(gui, in_main_menu)
 
   -- In Box rendering
   GuiText(gui, 0, 0, "Perk Ban List")
+  GuiText(gui, 0, 0, "Banned Perks: " .. perk_ban_count)
   GuiText(gui, 0, 0, "=========================")
 
   if GuiButton(gui, remove_random_perk_button_id, 0, 0, "Ban Random Perk") then
@@ -291,6 +328,7 @@ function ModSettingsGui(gui, in_main_menu)
         ModSettingSet(perk.key, true)
       end
     end
+    ban_count()
   end
   if GuiButton(gui, add_all_perk_button_id, 0, 0, "Unban All Perks") then
     for _, row in ipairs(perk_gui_rows) do
@@ -299,6 +337,7 @@ function ModSettingsGui(gui, in_main_menu)
         ModSettingSet(perk.key, false)
       end
     end
+    ban_count()
   end
   perk_icon(gui)
 
@@ -319,6 +358,7 @@ function ModSettingsGui(gui, in_main_menu)
 
   -- In Box rendering
   GuiText(gui, 0, 0, "Spell Ban List")
+  GuiText(gui, 0, 0, "Banned Spells: " .. spell_ban_count)
   GuiText(gui, 0, 0, "=========================")
 
   if GuiButton(gui, remove_random_spell_button_id, 0, 0, "Ban Random Spells") then
@@ -349,6 +389,7 @@ function ModSettingsGui(gui, in_main_menu)
         ModSettingSet(spell.key, true)
       end
     end
+    ban_count()
   end
   if GuiButton(gui, add_all_spell_button_id, 0, 0, "Unban All spells") then
     for _, row in ipairs(spell_gui_rows) do
@@ -357,6 +398,7 @@ function ModSettingsGui(gui, in_main_menu)
         ModSettingSet(spell.key, false)
       end
     end
+    ban_count()
   end
   spell_icon(gui)
 
