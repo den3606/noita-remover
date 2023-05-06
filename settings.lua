@@ -5,7 +5,8 @@ local function description()
       "==How to use==" .. "\n" ..
       "You can ban from left and right window.\n" ..
       "left is perks, rihgt is spells.\n" ..
-      "Ban perks/spells are enabled when Noita initialized (start new game).\n \n" ..
+      "Ban perks/spells are enabled when Noita initialized (start new game).\n" ..
+      "Banned items will be darkened. Unbanned items will be brighter.\n \n" ..
       "==Important==" .. "\n" ..
       "Excluding all perks/spells is not expected on Noita's part.\n" ..
       "For example, if you exclude all perks, \nthe progress display will be incorrect and an internal error will occur \n(Noita will not crash).\n" ..
@@ -15,7 +16,8 @@ local function description()
       "== 使い方 ==" .. "\n" ..
       "左右にある枠より設定が可能です。\n" ..
       "左にはパーク、右にはパークの設定があります。\n" ..
-      "BAN したパーク、スペルは Noita を再起動したときに適応されます\n（新規ゲームを始めたとき）\n \n" ..
+      "BAN したパーク、スペルは Noita を始めたときに適応されます\n（新規ゲームを始めたとき）\n" ..
+      "利用できるものは明るく、利用できないもの（BANされているもの）は暗くなります\n \n" ..
       "== 重要事項 ==" .. "\n" ..
       "全てのパーク、スペルを除外されることを Noita 側は想定していません。\n" ..
       "例えば、全てのパークを除外すると、メニューを開いたときや進行を確認したときに\n裏でエラーがでます（Noita 自体は落ちないのでそこは大丈夫です）。\n" ..
