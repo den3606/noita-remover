@@ -1,5 +1,3 @@
-dofile_once("mods/noita-remover/files/scripts/lib/utilities.lua")
-
 print("noita-remover load")
 
 function OnModPreInit()

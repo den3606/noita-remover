@@ -1,4 +1,3 @@
-dofile_once("data/scripts/lib/utilities.lua")
 local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 
 function StringToNumber(str)
