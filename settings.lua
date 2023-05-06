@@ -108,24 +108,24 @@ function GuiToggleImageButton(gui, image_id, button_id, icon_path, state_name, a
   end
 
 
-  local is_active = ModSettingGet(state_name) or false
+  local banned = ModSettingGet(state_name) or false
 
   if GuiButton(gui, button_id, 0, h / 4, blank) then
-    is_active = not is_active
+    banned = not banned
 
     -- graphic処理以外はButtonが押されたときのみ動作させる
-    ModSettingSet(state_name, is_active)
-    if is_active then
+    ModSettingSet(state_name, banned)
+    if banned then
       active_fn()
     else
       deactive_fn()
     end
   end
 
-  if is_active then
-    GuiImage(gui, image_id, -w, 0, icon_path, 0.3, 1)
-  else
+  if banned then
     GuiImage(gui, image_id, -w, 0, icon_path, 1, 1)
+  else
+    GuiImage(gui, image_id, -w, 0, icon_path, 0.3, 1)
   end
 end
 
@@ -243,8 +243,7 @@ end
 
 function ModSettingsGui(gui, in_main_menu)
   mod_settings_gui(mod_id, mod_settings, gui, in_main_menu)
-  local screen_width, screen_height = GuiGetScreenDimensions(gui);
-  print(tostring(screen_width), tostring(screen_height))
+  local screen_width, screen_height = GuiGetScreenDimensions(gui)
   ---------------------------------------------------------
   -- perk_ui.lua MAIN PROCESS
   GuiLayoutBeginLayer(gui)
