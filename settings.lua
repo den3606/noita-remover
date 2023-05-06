@@ -67,7 +67,13 @@ local VALUES = {
 }
 ---------------------------------------------------------
 
-
+---------------------------------------------------------
+-- RandomCount
+-- randomが被らないようにするためのもの
+local year, month, day, hour, minute, second = GameGetDateAndTimeUTC()
+local date = tonumber(tostring(year) ..
+  tostring(month) .. tostring(day) .. tostring(hour) .. tostring(minute) .. tostring(second))
+math.randomseed(date)
 
 ---------------------------------------------------------
 -- gui_utils.lua
@@ -267,6 +273,7 @@ function ModSettingsGui(gui, in_main_menu)
     end
 
     local ban_perk_number = math.random(#unremoved_perks)
+    print(tostring(ban_perk_number))
     for index, perk in ipairs(unremoved_perks) do
       if index == ban_perk_number then
         ModSettingSet(perk.state_name, true)
