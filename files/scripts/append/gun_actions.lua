@@ -3,9 +3,9 @@ local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 for i = #actions, 1, -1 do
   local spell = actions[i]
 
-  local is_removed = ModSettingGet(VALUES.MOD_NAME .. spell.id) or false
+  local banned = ModSettingGet(VALUES.MOD_NAME .. spell.id) or false
 
-  if is_removed then
+  if banned then
     table.remove(actions, i)
   end
 end
