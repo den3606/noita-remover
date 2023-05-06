@@ -317,6 +317,7 @@ function ModSettingsGui(gui, in_main_menu)
         ModSettingSet(perk.key, true)
       end
     end
+    ban_count()
   end
 
   GuiText(gui, 0, 0, "-------------------------")
@@ -378,6 +379,7 @@ function ModSettingsGui(gui, in_main_menu)
         ModSettingSet(spell.key, true)
       end
     end
+    ban_count()
   end
 
   GuiText(gui, 0, 0, "-------------------------")
