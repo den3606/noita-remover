@@ -37,4 +37,11 @@ ModLuaFileAppend("data/scripts/perks/perk_list.lua",
 ModLuaFileAppend("data/scripts/gun/gun_actions.lua",
   "mods/noita-remover/files/scripts/append/gun_actions.lua")
 
+
+local content = ModTextFileGetContent("data/translations/common.csv")
+local noita_remover_content = ModTextFileGetContent(
+  "mods/noita-remover/files/translations/common.csv")
+ModTextFileSetContent("data/translations/common.csv", content .. noita_remover_content)
+
+
 print("noita-remover loaded")

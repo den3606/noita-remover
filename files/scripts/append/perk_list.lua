@@ -9,3 +9,17 @@ for i = #perk_list, 1, -1 do
     table.remove(perk_list, i)
   end
 end
+
+if #perk_list == 0 then
+  table.insert(perk_list, {
+    id = "DUMMY",
+    ui_name = "$noita_remover_perk_dummy",
+    ui_description = "$noita_remover_perk_dummy",
+    ui_icon = "data/ui_gfx/inventory/item_bg_purchase_2.png",
+    perk_icon = "data/ui_gfx/inventory/item_bg_purchase_2.png",
+    game_effect = "",
+    particle_effect = "",
+    stackable = STACKABLE_NO,
+    usable_by_enemies = false,
+  })
+end

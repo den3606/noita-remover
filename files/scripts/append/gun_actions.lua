@@ -13,10 +13,10 @@ end
 if #actions == 0 then
   table.insert(actions, {
     id = "DUMMY",
-    name = "DUMMY",
-    description = "DUMMY",
-    sprite = "",
-    sprite_unidentified = "",
+    name = "$noita_remover_spell_dummy",
+    description = "$noita_remover_spell_dummy",
+    sprite = "data/ui_gfx/inventory/item_bg_purchase_2.png",
+    sprite_unidentified = "data/ui_gfx/inventory/item_bg_purchase_2.png",
     type = ACTION_TYPE_PROJECTILE,
     spawn_level = "",
     spawn_probability = "",
