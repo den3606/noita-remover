@@ -91,7 +91,7 @@ end
 
 -- HACK: 画像とボタンテキストを重ねて設置している
 -- 各言語によってスペースの扱い勝ちが言うので、調整が必要
-function GuiToggleImageButton(gui, image_id, button_id, icon_path, state_name, active_fn, deactive_fn)
+function GuiToggleImageButton(gui, image_id, button_id, icon_path, state_name, banned_fn, unbanned_fn)
   local w, h = GuiGetImageDimensions(gui, icon_path, 1)
 
   local blank = ''
@@ -116,16 +116,16 @@ function GuiToggleImageButton(gui, image_id, button_id, icon_path, state_name, a
     -- graphic処理以外はButtonが押されたときのみ動作させる
     ModSettingSet(state_name, banned)
     if banned then
-      active_fn()
+      banned_fn()
     else
-      deactive_fn()
+      unbanned_fn()
     end
   end
 
   if banned then
-    GuiImage(gui, image_id, -w, 0, icon_path, 1, 1)
-  else
     GuiImage(gui, image_id, -w, 0, icon_path, 0.3, 1)
+  else
+    GuiImage(gui, image_id, -w, 0, icon_path, 1, 1)
   end
 end
 
@@ -152,10 +152,10 @@ for i = 1, #perk_list do
     button_id = NewID(),
     icon_path = perk_list[i].perk_icon,
     state_name = VALUES.MOD_NAME .. perk_list[i].perk_icon,
-    active_fn = function()
+    banned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. perk_list[i].id, true)
     end,
-    deactive_fn = function()
+    unbanned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. perk_list[i].id, false)
     end,
   })
@@ -174,7 +174,7 @@ local function perk_icon(gui)
 
     for _, perk in ipairs(row) do
       GuiToggleImageButton(gui, perk.image_id, perk.button_id, perk.icon_path, perk.state_name,
-        perk.active_fn, perk.deactive_fn)
+        perk.banned_fn, perk.unbanned_fn)
     end
 
     GuiLayoutEnd(gui)
@@ -202,10 +202,10 @@ for i = 1, #actions do
     button_id = NewID(),
     icon_path = actions[i].sprite,
     state_name = VALUES.MOD_NAME .. actions[i].sprite,
-    active_fn = function()
+    banned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. actions[i].id, true)
     end,
-    deactive_fn = function()
+    unbanned_fn = function()
       ModSettingSet(VALUES.MOD_NAME .. actions[i].id, false)
     end,
   })
@@ -224,7 +224,7 @@ local function spell_icon(gui)
 
     for _, spell in ipairs(row) do
       GuiToggleImageButton(gui, spell.image_id, spell.button_id, spell.icon_path, spell.state_name,
-        spell.active_fn, spell.deactive_fn)
+        spell.banned_fn, spell.unbanned_fn)
     end
 
     GuiLayoutEnd(gui)
