@@ -123,9 +123,9 @@ function GuiToggleImageButton(gui, image_id, button_id, icon_path, state_name, a
   end
 
   if is_active then
-    GuiImage(gui, image_id, -w, 0, icon_path, 1, 1)
-  else
     GuiImage(gui, image_id, -w, 0, icon_path, 0.3, 1)
+  else
+    GuiImage(gui, image_id, -w, 0, icon_path, 1, 1)
   end
 end
 
