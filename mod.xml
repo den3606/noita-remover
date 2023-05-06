@@ -1,6 +1,6 @@
 <Mod
 	name="noita-remover"
-	description="This MOD can remoe Perks and Spells before start game."
+	description="This MOD can remove Perks and Spells before start game."
   tags="gameplay, quality of life,"
   request_no_api_restrictions="0"
 >
