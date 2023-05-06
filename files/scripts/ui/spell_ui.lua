@@ -5,6 +5,7 @@ local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 local scroll_container_id = NewID()
 local remove_all_spell_button_id = NewID()
 local add_all_spell_button_id = NewID()
+local remove_random_spell_button_id = NewID()
 
 local spell_gui_rows = {}
 local spell_row = {}
@@ -53,6 +54,28 @@ local function start(gui)
   -- In Box rendering
   GuiText(gui, 0, 0, "Spell Ban List")
   GuiText(gui, 0, 0, "=========================")
+
+  if GuiButton(gui, remove_random_spell_button_id, 0, 0, "Ban Random Spells") then
+    local unremoved_spells = {}
+    for _, row in ipairs(spell_gui_rows) do
+      for _, spell in ipairs(row) do
+        if (not ModSettingGet(spell.key)) or false then
+          table.insert(unremoved_spells, spell)
+        end
+      end
+    end
+
+    local ban_spell_number = math.random(#unremoved_spells)
+    for index, spell in ipairs(unremoved_spells) do
+      if index == ban_spell_number then
+        ModSettingSet(spell.state_name, true)
+        ModSettingSet(spell.key, true)
+      end
+    end
+  end
+
+  GuiText(gui, 0, 0, "-------------------------")
+
   if GuiButton(gui, remove_all_spell_button_id, 0, 0, "Ban All spells") then
     for _, row in ipairs(spell_gui_rows) do
       for _, spell in ipairs(row) do

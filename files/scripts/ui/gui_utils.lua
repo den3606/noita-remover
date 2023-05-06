@@ -11,14 +11,10 @@ function StringToNumber(str)
 end
 
 function NewID()
-  print(VALUES.GLOBAL_GUI_ID_KEY)
   local global_gui_id = tonumber(ModSettingGet(VALUES.GLOBAL_GUI_ID_KEY)) or 0
-  print(tostring(global_gui_id))
   if global_gui_id == 0 then
     global_gui_id = StringToNumber(VALUES.MOD_NAME)
   end
-
-  print(tostring(global_gui_id))
 
   global_gui_id = global_gui_id + 1
   ModSettingSet(VALUES.GLOBAL_GUI_ID_KEY, tostring(global_gui_id))

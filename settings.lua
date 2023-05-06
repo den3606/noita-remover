@@ -3,10 +3,10 @@ dofile("data/scripts/lib/mod_settings.lua")
 local noita_remover_description = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
     "==How to use==" .. "\n" ..
     "You can ban from left and right window.\n" ..
-    "left is perks, rihgt is spells.\n \n" ..
-
+    "left is perks, rihgt is spells.\n" ..
+    "Ban perks/spells are enabled when Noita initialized (start new game).\n \n" ..
     "==Important==" .. "\n" ..
-    "Excluding all perks/all spells is not expected on Noita's part.\n" ..
+    "Excluding all perks/spells is not expected on Noita's part.\n" ..
     "For example, if you exclude all perks, \nthe progress display will be incorrect and an internal error will occur \n(Noita will not crash).\n" ..
     "Please note that unforeseen events may occur.\n"
 

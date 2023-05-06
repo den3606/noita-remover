@@ -5,6 +5,7 @@ local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 local scroll_container_id = NewID()
 local remove_all_perk_button_id = NewID()
 local add_all_perk_button_id = NewID()
+local remove_random_perk_button_id = NewID()
 
 local perk_gui_rows = {}
 local perk_row = {}
@@ -53,6 +54,28 @@ local function start(gui)
   -- In Box rendering
   GuiText(gui, 0, 0, "Perk Ban List")
   GuiText(gui, 0, 0, "=========================")
+
+  if GuiButton(gui, remove_random_perk_button_id, 0, 0, "Ban Random Perk") then
+    local unremoved_perks = {}
+    for _, row in ipairs(perk_gui_rows) do
+      for _, perk in ipairs(row) do
+        if (not ModSettingGet(perk.key)) or false then
+          table.insert(unremoved_perks, perk)
+        end
+      end
+    end
+
+    local ban_perk_number = math.random(#unremoved_perks)
+    for index, perk in ipairs(unremoved_perks) do
+      if index == ban_perk_number then
+        ModSettingSet(perk.state_name, true)
+        ModSettingSet(perk.key, true)
+      end
+    end
+  end
+
+  GuiText(gui, 0, 0, "-------------------------")
+
   if GuiButton(gui, remove_all_perk_button_id, 0, 0, "Ban All Perks") then
     for _, row in ipairs(perk_gui_rows) do
       for _, perk in ipairs(row) do
