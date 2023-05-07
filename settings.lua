@@ -7,7 +7,7 @@ local function description()
   local noita_remover_description_en = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
       "==How to use==" .. "\n" ..
       "You can ban from left and right window.\n" ..
-      "left is perks, rihgt is spells.\n" ..
+      "Left is perks, rihgt is spells.\n" ..
       "Ban perks/spells are enabled when Noita initialized (start new game).\n" ..
       "Banned items will be darkened. Unbanned items will be brighter.\n \n" ..
       "==Important==" .. "\n" ..
@@ -18,12 +18,12 @@ local function description()
   local noita_remover_description_ja = "！下にある「適応して戻る」ボタンを押すのを忘れないでください！\n \n" ..
       "== 使い方 ==" .. "\n" ..
       "左右にある枠より設定が可能です。\n" ..
-      "左にはパーク、右にはパークの設定があります。\n" ..
+      "左にはパーク、右には呪文の設定があります。\n" ..
       "BAN したパーク、スペルは Noita を始めたときに適応されます\n（新規ゲームを始めたとき）\n" ..
-      "利用できるものは明るく、利用できないもの（BANされているもの）は暗くなります\n \n" ..
+      "利用できるものは明るく、\n利用できないもの（BANされているもの）は暗くなります\n \n" ..
       "== 重要事項 ==" .. "\n" ..
       "全てのパーク、スペルを除外されることを Noita 側は想定していません。\n" ..
-      "例えば、全てのパークを除外すると、メニューを開いたときや進行を確認したときに\n裏でエラーがでます（Noita 自体は落ちないのでそこは大丈夫です）。\n" ..
+      "例えば、全てのパークを除外すると、\nメニューを開いたときや進行を確認したときに裏でエラーがでます\n（Noita 自体は落ちないのでそこは大丈夫です）。\n" ..
       "想定外の事象が発生する可能性があることにご留意ください。\n"
 
   if GameTextGet("$current_language") == "English" then
