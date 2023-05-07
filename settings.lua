@@ -67,6 +67,8 @@ end
 local VALUES = {
   MOD_NAME = 'noita-remover',
   GLOBAL_GUI_ID_KEY = 'noita-remover.global-gui-id-key',
+  PERK_PREFIX = 'noita-remover.perk-ban.',
+  SPELL_PREFIX = 'noita-remover.spell-ban.',
 }
 ---------------------------------------------------------
 
@@ -93,7 +95,7 @@ local function ban_count()
     for i = #perk_list, 1, -1 do
       local perk = perk_list[i]
 
-      if ModSettingGet(VALUES.MOD_NAME .. perk.id) or false then
+      if ModSettingGet(VALUES.PERK_PREFIX .. perk.id) or false then
         count = count + 1
       end
     end
@@ -105,7 +107,7 @@ local function ban_count()
     for i = #actions, 1, -1 do
       local spell = actions[i]
 
-      if ModSettingGet(VALUES.MOD_NAME .. spell.id) or false then
+      if ModSettingGet(VALUES.SPELL_PREFIX .. spell.id) or false then
         count = count + 1
       end
     end
@@ -197,17 +199,17 @@ local perk_row = {}
 
 for i = 1, #perk_list do
   table.insert(perk_row, {
-    key = VALUES.MOD_NAME .. perk_list[i].id,
+    key = VALUES.PERK_PREFIX .. perk_list[i].id,
     image_id = NewID(),
     button_id = NewID(),
     icon_path = perk_list[i].perk_icon,
-    state_name = VALUES.MOD_NAME .. perk_list[i].perk_icon,
+    state_name = VALUES.PERK_PREFIX .. perk_list[i].perk_icon,
     banned_fn = function()
-      ModSettingSet(VALUES.MOD_NAME .. perk_list[i].id, true)
+      ModSettingSet(VALUES.PERK_PREFIX .. perk_list[i].id, true)
       ban_count()
     end,
     unbanned_fn = function()
-      ModSettingSet(VALUES.MOD_NAME .. perk_list[i].id, false)
+      ModSettingSet(VALUES.PERK_PREFIX .. perk_list[i].id, false)
       ban_count()
     end,
   })
@@ -248,17 +250,17 @@ local spell_row = {}
 
 for i = 1, #actions do
   table.insert(spell_row, {
-    key = VALUES.MOD_NAME .. actions[i].id,
+    key = VALUES.SPELL_PREFIX .. actions[i].id,
     image_id = NewID(),
     button_id = NewID(),
     icon_path = actions[i].sprite,
-    state_name = VALUES.MOD_NAME .. actions[i].sprite,
+    state_name = VALUES.SPELL_PREFIX .. actions[i].sprite,
     banned_fn = function()
-      ModSettingSet(VALUES.MOD_NAME .. actions[i].id, true)
+      ModSettingSet(VALUES.SPELL_PREFIX .. actions[i].id, true)
       ban_count()
     end,
     unbanned_fn = function()
-      ModSettingSet(VALUES.MOD_NAME .. actions[i].id, false)
+      ModSettingSet(VALUES.SPELL_PREFIX .. actions[i].id, false)
       ban_count()
     end,
   })

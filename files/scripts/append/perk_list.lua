@@ -3,7 +3,7 @@ local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 for i = #perk_list, 1, -1 do
   local perk = perk_list[i]
 
-  local banned = ModSettingGet(VALUES.MOD_NAME .. perk.id) or false
+  local banned = ModSettingGet(VALUES.PERK_PREFIX .. perk.id) or false
 
   if banned then
     table.remove(perk_list, i)
