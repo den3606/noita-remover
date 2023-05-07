@@ -88,23 +88,32 @@ local perk_ban_count = 0
 local spell_ban_count = 0
 
 local function ban_count()
-  perk_ban_count = 0
-  for i = #perk_list, 1, -1 do
-    local spell = perk_list[i]
+  local function perk_ban_counter()
+    local count = 0
+    for i = #perk_list, 1, -1 do
+      local perk = perk_list[i]
 
-    if ModSettingGet(VALUES.MOD_NAME .. spell.id) or false then
-      perk_ban_count = perk_ban_count + 1
+      if ModSettingGet(VALUES.MOD_NAME .. perk.id) or false then
+        count = count + 1
+      end
     end
+    return count
   end
 
-  spell_ban_count = 0
-  for i = #actions, 1, -1 do
-    local spell = actions[i]
+  local function spell_ban_counter()
+    local count = 0
+    for i = #actions, 1, -1 do
+      local spell = actions[i]
 
-    if ModSettingGet(VALUES.MOD_NAME .. spell.id) or false then
-      spell_ban_count = spell_ban_count + 1
+      if ModSettingGet(VALUES.MOD_NAME .. spell.id) or false then
+        count = count + 1
+      end
     end
+    return count
   end
+
+  perk_ban_count = perk_ban_counter()
+  spell_ban_count = spell_ban_counter()
 end
 ban_count()
 ---------------------------------------------------------
