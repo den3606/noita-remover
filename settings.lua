@@ -308,7 +308,6 @@ function ModSettingsGui(gui, in_main_menu)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
   local main_menu_x = (screen_width / 2) / 2.27
   local main_menu_y = (screen_height / 2) / 4.2
-  print(tostring(screen_width), tostring(screen_width))
 
 
   ---------------------------------------------------------
@@ -335,7 +334,6 @@ function ModSettingsGui(gui, in_main_menu)
     end
 
     local ban_perk_number = math.random(#unremoved_perks)
-    print(tostring(ban_perk_number))
     for index, perk in ipairs(unremoved_perks) do
       if index == ban_perk_number then
         ModSettingSet(perk.state_name, true)
