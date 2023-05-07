@@ -306,10 +306,17 @@ end
 function ModSettingsGui(gui, in_main_menu)
   mod_settings_gui(mod_id, mod_settings, gui, in_main_menu)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
+  local main_menu_x = (screen_width / 2) / 2.27
+  local main_menu_y = (screen_height / 2) / 4.2
+  print(tostring(screen_width), tostring(screen_width))
+
+
   ---------------------------------------------------------
   -- perk_ui.lua MAIN PROCESS
   GuiLayoutBeginLayer(gui)
-  GuiBeginScrollContainer(gui, perk_scroll_container_id, 2, 42, (screen_width / 5) - 5, 278)
+  local perk_width = (screen_width / 5) - (screen_width / 150)
+  local perk_x = main_menu_x - (perk_width + perk_width / 8)
+  GuiBeginScrollContainer(gui, perk_scroll_container_id, perk_x, main_menu_y, perk_width, 277)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
@@ -370,10 +377,9 @@ function ModSettingsGui(gui, in_main_menu)
   ---------------------------------------------------------
   -- spell_ui.lua MAIN PROCESS
   GuiLayoutBeginLayer(gui)
-  -- GuiBeginScrollContainer(gui, spell_scroll_container_id, 130, 42, 125, 278)
-  GuiBeginScrollContainer(gui, spell_scroll_container_id, screen_width - 140, 42,
-    (screen_width / 5) - 5,
-    278)
+  local spell_width = (screen_width / 5) - (screen_width / 160)
+  local spell_x = main_menu_x + (spell_width * 3 - spell_width / 9)
+  GuiBeginScrollContainer(gui, spell_scroll_container_id, spell_x, main_menu_y, spell_width, 276)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
