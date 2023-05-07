@@ -1,6 +1,9 @@
-# Remove Spells
+# Noita Remover
 
-パークとスペルを世界から消し去るためのMOD
+![Noita Remover Image](workshop_preview_image.png)
+
+This MOD can remove Perks and Spells before start game.
+パークとスペルを世界から消し去るための MOD です。
 
 ## LICENSE
 
