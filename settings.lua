@@ -128,6 +128,21 @@ ban_count()
 
 
 ---------------------------------------------------------
+-- Last Selected Ban Perk/Spell
+local last_selected_perk_path = 'data/ui_gfx/gun_actions/baab_empty.png'
+local last_selected_spell_path = 'data/ui_gfx/gun_actions/baab_empty.png'
+
+local is_empty_last_perk = function()
+  return last_selected_perk_path == 'data/ui_gfx/gun_actions/baab_empty.png'
+end
+
+local is_empty_last_spell = function()
+  return last_selected_spell_path == 'data/ui_gfx/gun_actions/baab_empty.png'
+end
+---------------------------------------------------------
+
+
+---------------------------------------------------------
 -- gui_utils.lua
 function StringToNumber(str)
   local num = 0
@@ -214,6 +229,7 @@ for i = 1, #perk_list do
     banned_fn = function()
       ModSettingSet(VALUES.PERK_PREFIX .. perk_list[i].id, true)
       ban_count()
+      last_selected_perk_path = perk_list[i].perk_icon
     end,
     unbanned_fn = function()
       ModSettingSet(VALUES.PERK_PREFIX .. perk_list[i].id, false)
@@ -266,6 +282,7 @@ for i = 1, #actions do
     banned_fn = function()
       ModSettingSet(VALUES.SPELL_PREFIX .. actions[i].id, true)
       ban_count()
+      last_selected_spell_path = actions[i].sprite
     end,
     unbanned_fn = function()
       ModSettingSet(VALUES.SPELL_PREFIX .. actions[i].id, false)
@@ -321,6 +338,14 @@ function ModSettingsGui(gui, in_main_menu)
   -- In Box rendering
   GuiText(gui, 0, 0, "Perk Ban List")
   GuiText(gui, 0, 0, "Banned Perks: " .. perk_ban_count)
+  GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
+  GuiText(gui, 0, 3, "Last Banned Perk:")
+  if is_empty_last_perk() then
+    GuiImage(gui, 321321, 0, 0, last_selected_perk_path, 0, 1)
+  else
+    GuiImage(gui, 321322, 0, 0, last_selected_perk_path, 1, 1)
+  end
+  GuiLayoutEnd(gui)
   GuiText(gui, 0, 0, "=========================")
 
   if GuiButton(gui, remove_random_perk_button_id, 0, 0, "Ban Random Perk") then
@@ -338,6 +363,7 @@ function ModSettingsGui(gui, in_main_menu)
       if index == ban_perk_number then
         ModSettingSet(perk.state_name, true)
         ModSettingSet(perk.key, true)
+        last_selected_perk_path = perk.icon_path
       end
     end
     ban_count()
@@ -383,6 +409,14 @@ function ModSettingsGui(gui, in_main_menu)
   -- In Box rendering
   GuiText(gui, 0, 0, "Spell Ban List")
   GuiText(gui, 0, 0, "Banned Spells: " .. spell_ban_count)
+  GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
+  GuiText(gui, 0, 3, "Last Banned Spell:")
+  if is_empty_last_spell() then
+    GuiImage(gui, 321321, 0, 0, last_selected_spell_path, 0, 1)
+  else
+    GuiImage(gui, 321322, 0, 0, last_selected_spell_path, 1, 1)
+  end
+  GuiLayoutEnd(gui)
   GuiText(gui, 0, 0, "=========================")
 
   if GuiButton(gui, remove_random_spell_button_id, 0, 0, "Ban Random Spells") then
@@ -400,6 +434,7 @@ function ModSettingsGui(gui, in_main_menu)
       if index == ban_spell_number then
         ModSettingSet(spell.state_name, true)
         ModSettingSet(spell.key, true)
+        last_selected_spell_path = spell.icon_path
       end
     end
     ban_count()
