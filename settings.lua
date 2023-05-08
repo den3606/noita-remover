@@ -12,9 +12,14 @@ local VALUES = {
   PERK_BAN_PREFIX = 'noita-remover.perk-ban.',
   PERK_BAN_POOL_PREFIX = 'noita-remover.perk-ban-pool.',
   SPELL_BAN_PREFIX = 'noita-remover.spell-ban.',
+  SPELL_BAN_POOL_PREFIX = 'noita-remover.spell-ban-pool.',
   PERK_GUI = {
     BAN_SELECT = 'perk_ban',
     BAN_POOL = 'perk_ban_pool',
+  },
+  SPELL_GUI = {
+    BAN_SELECT = 'spell_ban',
+    BAN_POOL = 'spell_ban_pool',
   }
 }
 ---------------------------------------------------------
@@ -72,8 +77,12 @@ end
 -- Current GUI ID
 
 local perk_gui_id = VALUES.PERK_GUI.BAN_SELECT
-local function switch_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+local function switch_perk_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
   perk_gui_id = new_value
+end
+local spell_gui_id = VALUES.SPELL_GUI.BAN_SELECT
+local function switch_spell_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  spell_gui_id = new_value
 end
 ---------------------------------------------------------
 
@@ -87,14 +96,30 @@ mod_settings =
     ui_name = "Perk GUI Settings",
     settings = {
       {
-        id = "current_gui",
+        id = "current_perk_gui",
         ui_name = ">Selected GUI",
         ui_description = "The selected GUI is displayed on the left.",
         value_default = VALUES.PERK_GUI.BAN_SELECT,
         values = { { VALUES.PERK_GUI.BAN_SELECT, "Perk Ban List" },
           { VALUES.PERK_GUI.BAN_POOL,   "Perk Ban Pool List" } },
         scope = MOD_SETTING_SCOPE_RUNTIME,
-        change_fn = switch_gui_callback, -- Called when the user interact with the settings widget.
+        change_fn = switch_perk_gui_callback,
+      },
+    },
+  },
+  {
+    category_id = "group_of_spell_settings",
+    ui_name = "Spell GUI Settings",
+    settings = {
+      {
+        id = "current_spell_gui",
+        ui_name = ">Selected GUI",
+        ui_description = "The selected GUI is displayed on the right.",
+        value_default = VALUES.SPELL_GUI.BAN_SELECT,
+        values = { { VALUES.SPELL_GUI.BAN_SELECT, "Spell Ban List" },
+          { VALUES.SPELL_GUI.BAN_POOL,   "Spell Ban Pool List" } },
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+        change_fn = switch_spell_gui_callback,
       },
     },
   },
@@ -405,11 +430,11 @@ local spell_row = {}
 
 for i = 1, #actions do
   table.insert(spell_row, {
-    key = VALUES.SPELL_BAN_PREFIX .. actions[i].id,
-    image_id = NewID(),
-    button_id = NewID(),
+    ban_key = VALUES.SPELL_BAN_PREFIX .. actions[i].id,
+    ban_image_id = NewID(),
+    ban_button_id = NewID(),
     icon_path = actions[i].sprite,
-    state_name = VALUES.SPELL_BAN_PREFIX .. actions[i].sprite,
+    ban_state_name = VALUES.SPELL_BAN_PREFIX .. actions[i].sprite,
     banned_fn = function()
       ModSettingSet(VALUES.SPELL_BAN_PREFIX .. actions[i].id, true)
       ban_count()
@@ -418,6 +443,17 @@ for i = 1, #actions do
     unbanned_fn = function()
       ModSettingSet(VALUES.SPELL_BAN_PREFIX .. actions[i].id, false)
       ban_count()
+    end,
+    ban_pool_image_id = NewID(),
+    ban_pool_button_id = NewID(),
+    ban_pool_key = VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].id,
+    ban_pool_state_name =
+        VALUES.SPELL_BAN_PREFIX .. VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].sprite,
+    include_from_ban_pool_fn = function()
+      ModSettingSet(VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].id, true)
+    end,
+    exclude_from_ban_pool_fn = function()
+      ModSettingSet(VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].id, false)
     end,
   })
   if i % 6 == 0 then
@@ -434,9 +470,24 @@ local function spell_icon(gui)
     GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
 
     for _, spell in ipairs(row) do
-      GuiToggleImageDisableButton(gui, spell.image_id, spell.button_id, spell.icon_path,
-        spell.state_name,
+      GuiToggleImageDisableButton(gui, spell.ban_image_id, spell.ban_button_id, spell.icon_path,
+        spell.ban_state_name,
         spell.unbanned_fn, spell.banned_fn)
+    end
+
+    GuiLayoutEnd(gui)
+  end
+end
+
+local function spell_pool_icon(gui)
+  for _, row in ipairs(spell_gui_rows) do
+    GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
+
+    for _, spell in ipairs(row) do
+      GuiToggleImageEnableButton(
+        gui, spell.ban_pool_image_id, spell.ban_pool_button_id, spell.icon_path,
+        spell.ban_pool_state_name,
+        spell.include_from_ban_pool_fn, spell.exclude_from_ban_pool_fn)
     end
 
     GuiLayoutEnd(gui)
@@ -447,7 +498,7 @@ end
 
 
 ---------------------------------------------------------
--- perk_ui.lua MAIN PROCESS
+-- Park Ban List
 local function draw_perk_ban_box(gui)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
   local main_menu_x = (screen_width / 2) / 2.27
@@ -531,6 +582,8 @@ end
 
 
 
+---------------------------------------------------------
+-- Park Ban Pool List
 local function draw_perk_ban_pool_box(gui)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
   local main_menu_x = (screen_width / 2) / 2.27
@@ -569,10 +622,12 @@ local function draw_perk_ban_pool_box(gui)
   GuiEndScrollContainer(gui)
   GuiLayoutEndLayer(gui)
 end
+---------------------------------------------------------
+
 
 
 ---------------------------------------------------------
--- spell_ui.lua MAIN PROCESS
+-- Spell Pool List
 local function draw_spell_ban_box(gui)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
   local main_menu_x = (screen_width / 2) / 2.27
@@ -601,7 +656,15 @@ local function draw_spell_ban_box(gui)
     local unremoved_spells = {}
     for _, row in ipairs(spell_gui_rows) do
       for _, spell in ipairs(row) do
-        if (not ModSettingGet(spell.key)) or false then
+        local include_ban_pool = ModSettingGet(spell.ban_pool_key)
+        if include_ban_pool == nil then
+          include_ban_pool = true
+        end
+        local is_not_banned = not ModSettingGet(spell.ban_key)
+        if is_not_banned == nil then
+          is_not_banned = false
+        end
+        if include_ban_pool and is_not_banned then
           table.insert(unremoved_spells, spell)
         end
       end
@@ -610,8 +673,8 @@ local function draw_spell_ban_box(gui)
     local ban_spell_number = math.random(#unremoved_spells)
     for index, spell in ipairs(unremoved_spells) do
       if index == ban_spell_number then
-        ModSettingSet(spell.state_name, true)
-        ModSettingSet(spell.key, true)
+        ModSettingSet(spell.ban_state_name, true)
+        ModSettingSet(spell.ban_key, true)
         last_selected_spell_path = spell.icon_path
       end
     end
@@ -623,8 +686,8 @@ local function draw_spell_ban_box(gui)
   if GuiButton(gui, remove_all_spell_button_id, 0, 0, ">Ban All Spells") then
     for _, row in ipairs(spell_gui_rows) do
       for _, spell in ipairs(row) do
-        ModSettingSet(spell.state_name, true)
-        ModSettingSet(spell.key, true)
+        ModSettingSet(spell.ban_state_name, true)
+        ModSettingSet(spell.ban_key, true)
       end
     end
     ban_count()
@@ -632,8 +695,8 @@ local function draw_spell_ban_box(gui)
   if GuiButton(gui, add_all_spell_button_id, 0, 0, ">Unban All Spells") then
     for _, row in ipairs(spell_gui_rows) do
       for _, spell in ipairs(row) do
-        ModSettingSet(spell.state_name, false)
-        ModSettingSet(spell.key, false)
+        ModSettingSet(spell.ban_state_name, false)
+        ModSettingSet(spell.ban_key, false)
       end
     end
     ban_count()
@@ -648,6 +711,52 @@ end
 
 
 
+---------------------------------------------------------
+-- Spell Ban Pool List
+local function draw_spell_ban_pool_box(gui)
+  local screen_width, screen_height = GuiGetScreenDimensions(gui)
+  local main_menu_x = (screen_width / 2) / 2.27
+  local main_menu_y = (screen_height / 2) / 4.2
+
+  GuiLayoutBeginLayer(gui)
+  local spell_width = (screen_width / 5) - (screen_width / 160)
+  local spell_x = main_menu_x + (spell_width * 3 - spell_width / 9)
+  GuiBeginScrollContainer(gui, spell_scroll_container_id, spell_x, main_menu_y, spell_width, 276)
+  GuiLayoutBeginVertical(gui, 0, 0)
+
+  -- In Box rendering
+  GuiText(gui, 0, 0, "Spell Ban Pool List")
+  GuiText(gui, 0, 0, "=========================")
+  if GuiButton(gui, add_all_spell_button_id, 0, 0, ">Include All Spells") then
+    for _, row in ipairs(spell_gui_rows) do
+      for _, spell in ipairs(row) do
+        ModSettingSet(spell.ban_pool_key, true)
+        ModSettingSet(spell.ban_pool_state_name, true)
+      end
+    end
+  end
+
+  if GuiButton(gui, remove_all_spell_button_id, 0, 0, ">Exclude All Spells") then
+    for _, row in ipairs(spell_gui_rows) do
+      for _, spell in ipairs(row) do
+        ModSettingSet(spell.ban_pool_key, false)
+        ModSettingSet(spell.ban_pool_state_name, false)
+      end
+    end
+  end
+
+  spell_pool_icon(gui)
+
+  GuiLayoutEnd(gui)
+  GuiEndScrollContainer(gui)
+  GuiLayoutEndLayer(gui)
+end
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
+-- executer
 function ModSettingsGui(gui, in_main_menu)
   mod_settings_gui(mod_id, mod_settings, gui, in_main_menu)
 
@@ -657,5 +766,9 @@ function ModSettingsGui(gui, in_main_menu)
     draw_perk_ban_pool_box(gui)
   end
 
-  draw_spell_ban_box(gui)
+  if spell_gui_id == VALUES.SPELL_GUI.BAN_SELECT then
+    draw_spell_ban_box(gui)
+  elseif spell_gui_id == VALUES.SPELL_GUI.BAN_POOL then
+    draw_spell_ban_pool_box(gui)
+  end
 end
