@@ -348,7 +348,7 @@ function ModSettingsGui(gui, in_main_menu)
   GuiLayoutEnd(gui)
   GuiText(gui, 0, 0, "=========================")
 
-  if GuiButton(gui, remove_random_perk_button_id, 0, 0, "Ban Random Perk") then
+  if GuiButton(gui, remove_random_perk_button_id, 0, 0, ">Ban Random Perk") then
     local unremoved_perks = {}
     for _, row in ipairs(perk_gui_rows) do
       for _, perk in ipairs(row) do
@@ -371,7 +371,7 @@ function ModSettingsGui(gui, in_main_menu)
 
   GuiText(gui, 0, 0, "-------------------------")
 
-  if GuiButton(gui, remove_all_perk_button_id, 0, 0, "Ban All Perks") then
+  if GuiButton(gui, remove_all_perk_button_id, 0, 0, ">Ban All Perks") then
     for _, row in ipairs(perk_gui_rows) do
       for _, perk in ipairs(row) do
         ModSettingSet(perk.state_name, true)
@@ -380,7 +380,7 @@ function ModSettingsGui(gui, in_main_menu)
     end
     ban_count()
   end
-  if GuiButton(gui, add_all_perk_button_id, 0, 0, "Unban All Perks") then
+  if GuiButton(gui, add_all_perk_button_id, 0, 0, ">Unban All Perks") then
     for _, row in ipairs(perk_gui_rows) do
       for _, perk in ipairs(row) do
         ModSettingSet(perk.state_name, false)
@@ -419,7 +419,7 @@ function ModSettingsGui(gui, in_main_menu)
   GuiLayoutEnd(gui)
   GuiText(gui, 0, 0, "=========================")
 
-  if GuiButton(gui, remove_random_spell_button_id, 0, 0, "Ban Random Spells") then
+  if GuiButton(gui, remove_random_spell_button_id, 0, 0, ">Ban Random Spells") then
     local unremoved_spells = {}
     for _, row in ipairs(spell_gui_rows) do
       for _, spell in ipairs(row) do
@@ -442,7 +442,7 @@ function ModSettingsGui(gui, in_main_menu)
 
   GuiText(gui, 0, 0, "-------------------------")
 
-  if GuiButton(gui, remove_all_spell_button_id, 0, 0, "Ban All spells") then
+  if GuiButton(gui, remove_all_spell_button_id, 0, 0, ">Ban All Spells") then
     for _, row in ipairs(spell_gui_rows) do
       for _, spell in ipairs(row) do
         ModSettingSet(spell.state_name, true)
@@ -451,7 +451,7 @@ function ModSettingsGui(gui, in_main_menu)
     end
     ban_count()
   end
-  if GuiButton(gui, add_all_spell_button_id, 0, 0, "Unban All spells") then
+  if GuiButton(gui, add_all_spell_button_id, 0, 0, ">Unban All Spells") then
     for _, row in ipairs(spell_gui_rows) do
       for _, spell in ipairs(row) do
         ModSettingSet(spell.state_name, false)
