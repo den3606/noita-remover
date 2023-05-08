@@ -25,26 +25,36 @@ local VALUES = {
 -- Localise
 local function description()
   local noita_remover_description_en = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
+      "==Important==" .. "\n" ..
+      "Excluding all perks/spells is not expected on Noita's part.\n" ..
+      "For example, if you exclude all perks, \nthe progress display will be incorrect and an internal error will occur \n(Noita will not crash).\n" ..
+      "Please note that unforeseen events may occur.\n" ..
       "==How to use==" .. "\n" ..
       "You can ban from left and right window.\n" ..
       "Left is perks, rihgt is spells.\n" ..
       "Ban perks/spells are enabled when Noita initialized (start new game).\n" ..
       "Banned items will be darkened. Unbanned items will be brighter.\n \n" ..
-      "==Important==" .. "\n" ..
-      "Excluding all perks/spells is not expected on Noita's part.\n" ..
-      "For example, if you exclude all perks, \nthe progress display will be incorrect and an internal error will occur \n(Noita will not crash).\n" ..
-      "Please note that unforeseen events may occur.\n"
+      "==Random BAN==" .. "\n" ..
+      "By default, a random draw is made among all Perk/Spells.\n" ..
+      "You can select Spell/Perk for the Random BAN \nby changing the GUI from the Selected GUI in the main window.\n" ..
+      "(\"Perk Ban Pool List\" window).\n" ..
+      "In this window, Perks targeted for BAN are brightly displayed.\n \n"
 
-  local noita_remover_description_ja = "下にある「適応して戻る」ボタンを押すのを忘れないでください\n \n" ..
-      "== 使い方 ==" .. "\n" ..
+  local noita_remover_description_ja = "==はじめに==\n下にある「適応して戻る」ボタンを押すのを忘れないでください\n \n" ..
+      "== 重要事項 ==" .. "\n" ..
+      "全てのパーク、スペルを除外されることを Noita 側は想定していません。\n" ..
+      "例えば、全てのパークを除外すると、\nメニューを開いたときや進行を確認したときに裏でエラーがでます\n（Noita 自体は落ちないのでそこは大丈夫です）。\n" ..
+      "想定外の事象が発生する可能性があることにご留意ください。\n \n" ..
+      "== 大まかな使い方 ==" .. "\n" ..
       "左右にある枠より設定が可能です。\n" ..
       "左にはパーク、右には呪文の設定があります。\n" ..
       "BAN したパーク、スペルは Noita を始めたときに適応されます\n（新規ゲームを始めたとき）\n" ..
       "利用できるものは明るく、\n利用できないもの（BANされているもの）は暗くなります\n \n" ..
-      "== 重要事項 ==" .. "\n" ..
-      "全てのパーク、スペルを除外されることを Noita 側は想定していません。\n" ..
-      "例えば、全てのパークを除外すると、\nメニューを開いたときや進行を確認したときに裏でエラーがでます\n（Noita 自体は落ちないのでそこは大丈夫です）。\n" ..
-      "想定外の事象が発生する可能性があることにご留意ください。\n"
+      "== ランダム BAN について ==" .. "\n" ..
+      "デフォルトでは、全 Perk/Spell の中からランダムで抽選が行われます。\n" ..
+      "メイン項目の Selected GUI から、GUIを変更することで\nRnadom BAN の対象 Spell/Perk を選択できます。\n" ..
+      "（Perk Ban Pool List画面）\n" ..
+      "この画面では、BAN 対象となる Perk が明るく表示されます。\n"
 
   if GameTextGet("$current_language") == "English" then
     return noita_remover_description_en
@@ -91,6 +101,8 @@ mod_settings =
   {
     category_id = "group_of_description",
     ui_name = "Noita Remover Description",
+    foldable = true,
+    _folded = true,
     settings = {
       {
         id = "noita-remover-description",
