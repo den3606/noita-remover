@@ -33,7 +33,7 @@ local function description()
       "==Important==" .. "\n" ..
       "Excluding all perks/spells is not expected on Noita's part.\n" ..
       "For example, if you exclude all perks, \nthe progress display will be incorrect and an internal error will occur \n(Noita will not crash).\n" ..
-      "Please note that unforeseen events may occur.\n" ..
+      "Please note that unforeseen events may occur.\n \n" ..
       "==How to use==" .. "\n" ..
       "You can ban from left and right window.\n" ..
       "Left is perks, rihgt is spells.\n" ..
@@ -43,7 +43,7 @@ local function description()
       "By default, a random draw is made among all Perk/Spells.\n" ..
       "You can select Spell/Perk for the Random BAN \nby changing the GUI from the Selected GUI in the main window.\n" ..
       "(\"Perk Ban Pool List\" window).\n" ..
-      "In this window, Perks targeted for BAN are brightly displayed.\n \n"
+      "In this window, Perks targeted for BAN are brightly displayed.\n"
 
   local noita_remover_description_ja = "==はじめに==\n下にある「適応して戻る」ボタンを押すのを忘れないでください\n \n" ..
       "== 重要事項 ==" .. "\n" ..
@@ -338,6 +338,13 @@ end
 
 
 ---------------------------------------------------------
+-- dummy_ui
+local dummy_ui_id = NewID()
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
 -- perk_ui.lua
 
 local perk_scroll_container_id = NewID()
@@ -499,15 +506,14 @@ end
 
 ---------------------------------------------------------
 -- Park Ban List
-local function draw_perk_ban_box(gui)
+local function draw_perk_ban_box(gui, main_menu_widget_info)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
-  local main_menu_x = (screen_width / 2) / 2.27
-  local main_menu_y = (screen_height / 2) / 4.2
 
   GuiLayoutBeginLayer(gui)
   local perk_width = (screen_width / 5) - (screen_width / 150)
-  local perk_x = main_menu_x - (perk_width + perk_width / 8)
-  GuiBeginScrollContainer(gui, perk_scroll_container_id, perk_x, main_menu_y, perk_width, 277)
+  local perk_x = main_menu_widget_info.x - perk_width - 16
+  GuiBeginScrollContainer(
+    gui, perk_scroll_container_id, perk_x, main_menu_widget_info.y, perk_width, 277)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
@@ -584,15 +590,14 @@ end
 
 ---------------------------------------------------------
 -- Park Ban Pool List
-local function draw_perk_ban_pool_box(gui)
+local function draw_perk_ban_pool_box(gui, main_menu_widget_info)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
-  local main_menu_x = (screen_width / 2) / 2.27
-  local main_menu_y = (screen_height / 2) / 4.2
 
   GuiLayoutBeginLayer(gui)
   local perk_width = (screen_width / 5) - (screen_width / 150)
-  local perk_x = main_menu_x - (perk_width + perk_width / 8)
-  GuiBeginScrollContainer(gui, perk_scroll_container_id, perk_x, main_menu_y, perk_width, 277)
+  local perk_x = main_menu_widget_info.x - perk_width - 16
+  GuiBeginScrollContainer(
+    gui, perk_scroll_container_id, perk_x, main_menu_widget_info.y, perk_width, 277)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
@@ -628,15 +633,14 @@ end
 
 ---------------------------------------------------------
 -- Spell Pool List
-local function draw_spell_ban_box(gui)
+local function draw_spell_ban_box(gui, main_menu_widget_info)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
-  local main_menu_x = (screen_width / 2) / 2.27
-  local main_menu_y = (screen_height / 2) / 4.2
 
   GuiLayoutBeginLayer(gui)
   local spell_width = (screen_width / 5) - (screen_width / 160)
-  local spell_x = main_menu_x + (spell_width * 3 - spell_width / 9)
-  GuiBeginScrollContainer(gui, spell_scroll_container_id, spell_x, main_menu_y, spell_width, 276)
+  local spell_x = main_menu_widget_info.x + main_menu_widget_info.w + 4
+  GuiBeginScrollContainer(gui, spell_scroll_container_id, spell_x, main_menu_widget_info.y,
+    spell_width, 277)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
@@ -713,15 +717,14 @@ end
 
 ---------------------------------------------------------
 -- Spell Ban Pool List
-local function draw_spell_ban_pool_box(gui)
+local function draw_spell_ban_pool_box(gui, main_menu_widget_info)
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
-  local main_menu_x = (screen_width / 2) / 2.27
-  local main_menu_y = (screen_height / 2) / 4.2
 
   GuiLayoutBeginLayer(gui)
   local spell_width = (screen_width / 5) - (screen_width / 160)
-  local spell_x = main_menu_x + (spell_width * 3 - spell_width / 9)
-  GuiBeginScrollContainer(gui, spell_scroll_container_id, spell_x, main_menu_y, spell_width, 276)
+  local spell_x = main_menu_widget_info.x + main_menu_widget_info.w + 4
+  GuiBeginScrollContainer(gui, spell_scroll_container_id, spell_x, main_menu_widget_info.y,
+    spell_width, 277)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
@@ -757,18 +760,44 @@ end
 
 ---------------------------------------------------------
 -- executer
+-- this variables set when initialized
+local main_menu_widget_info = {
+  x = 0,
+  y = 0,
+  w = 0,
+  h = 0,
+}
 function ModSettingsGui(gui, in_main_menu)
   mod_settings_gui(mod_id, mod_settings, gui, in_main_menu)
 
+  -- if not is_initialized then
+  -- HACK: 一時的にMainウィンドウと同じサイズの画像ウィンドウを生成して、メインウィンドウの大きさを取得する
+  local screen_width, screen_height = GuiGetScreenDimensions(gui)
+  local main_menu_x = (screen_width / 2) - (354 / 2) - 2
+  local main_menu_y = (screen_height / 2) / 4.2
+  GuiZSet(gui, 100)
+  GuiLayoutBeginLayer(gui)
+  GuiImageNinePiece(gui, dummy_ui_id, main_menu_x, main_menu_y, 354, 283, 0)
+  _, _, _,
+  main_menu_widget_info.x,
+  main_menu_widget_info.y,
+  main_menu_widget_info.w,
+  main_menu_widget_info.h
+  = GuiGetPreviousWidgetInfo(gui)
+  GuiLayoutEndLayer(gui)
+  GuiZSet(gui, 0)
+  -- is_initialized = true
+  -- end
+
   if perk_gui_id == VALUES.PERK_GUI.BAN_SELECT then
-    draw_perk_ban_box(gui)
+    draw_perk_ban_box(gui, main_menu_widget_info)
   elseif perk_gui_id == VALUES.PERK_GUI.BAN_POOL then
-    draw_perk_ban_pool_box(gui)
+    draw_perk_ban_pool_box(gui, main_menu_widget_info)
   end
 
   if spell_gui_id == VALUES.SPELL_GUI.BAN_SELECT then
-    draw_spell_ban_box(gui)
+    draw_spell_ban_box(gui, main_menu_widget_info)
   elseif spell_gui_id == VALUES.SPELL_GUI.BAN_POOL then
-    draw_spell_ban_pool_box(gui)
+    draw_spell_ban_pool_box(gui, main_menu_widget_info)
   end
 end
