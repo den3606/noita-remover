@@ -770,7 +770,6 @@ local main_menu_widget_info = {
 function ModSettingsGui(gui, in_main_menu)
   mod_settings_gui(mod_id, mod_settings, gui, in_main_menu)
 
-  -- if not is_initialized then
   -- HACK: 一時的にMainウィンドウと同じサイズの画像ウィンドウを生成して、メインウィンドウの大きさを取得する
   local screen_width, screen_height = GuiGetScreenDimensions(gui)
   local main_menu_x = (screen_width / 2) - (354 / 2) - 2
