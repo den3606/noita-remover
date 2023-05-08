@@ -1,7 +1,6 @@
 dofile("data/scripts/lib/mod_settings.lua")
-dofile("data/scripts/perks/perk_list.lua")
-dofile("data/scripts/gun/gun_actions.lua")
-
+dofile_once("data/scripts/perks/perk_list.lua")
+dofile_once("data/scripts/gun/gun_actions.lua")
 
 local function description()
   local noita_remover_description_en = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
