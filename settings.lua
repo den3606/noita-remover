@@ -9,6 +9,7 @@ dofile_once("data/scripts/gun/gun_actions.lua")
 local VALUES = {
   MOD_NAME = 'noita-remover',
   GLOBAL_GUI_ID_KEY = 'noita-remover.global-gui-id-key',
+  DANGER_ANNOUNCE = 'noita-remover.do-not-edit-in-game.',
   PERK_BAN_PREFIX = 'noita-remover.perk-ban.',
   PERK_BAN_POOL_PREFIX = 'noita-remover.perk-ban-pool.',
   SPELL_BAN_PREFIX = 'noita-remover.spell-ban.',
@@ -28,6 +29,16 @@ local VALUES = {
 
 ---------------------------------------------------------
 -- Localise
+local function language()
+  if GameTextGet("$current_language") == "English" then
+    return 'en'
+  end
+  if GameTextGet("$current_language") == "日本語" then
+    return 'ja'
+  end
+  return 'en'
+end
+
 local function description()
   local noita_remover_description_en = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
       "==Important==" .. "\n" ..
@@ -61,10 +72,10 @@ local function description()
       "（Perk Ban Pool List画面）\n" ..
       "この画面では、BAN 対象となる Perk が明るく表示されます。\n"
 
-  if GameTextGet("$current_language") == "English" then
+  if language() == "en" then
     return noita_remover_description_en
   end
-  if GameTextGet("$current_language") == "日本語" then
+  if language() == "ja" then
     return noita_remover_description_ja
   end
   return noita_remover_description_en
@@ -758,6 +769,54 @@ end
 
 
 ---------------------------------------------------------
+-- Danger Announce
+local announced = ModSettingGet(VALUES.DANGER_ANNOUNCE)
+if announced == nil then
+  announced = false
+end
+local function draw_danger_announce(gui)
+  if GameGetFrameNum() ~= 0 and (not announced) then
+    local line_1 = ''
+    local line_2 = ''
+    local yes = ''
+
+    local screen_width, screen_height = GuiGetScreenDimensions(gui)
+    if language() == "ja" then
+      line_1 = 'ゲームプレイ中で既に Noita 世界に生成されているスペル/パークをBANすると、'
+      line_2 = '生成されているスペル/パークが使用できなくなる可能性があります'
+      yes = '>理解しました'
+    else
+      line_1 = 'If you ban an already generated perk or spell during gameplay,'
+      line_2 = 'perk or spell may no longer be available.'
+      yes = '>OK'
+    end
+
+    GuiZSetForNextWidget(gui, 150)
+    GuiText(gui, 0, 0, yes)
+    local _, _, _, _, _, text_width = GuiGetPreviousWidgetInfo(gui)
+    GuiLayoutBeginLayer(gui)
+    GuiBeginAutoBox(gui)
+    GuiLayoutBeginVertical(gui, 0, 0)
+    GuiZSetForNextWidget(gui, -150)
+    GuiTextCentered(gui, (screen_width / 2), (screen_height / 2) - 20, line_1)
+    GuiZSetForNextWidget(gui, -150)
+    GuiTextCentered(gui, (screen_width / 2), 0, line_2)
+    GuiZSetForNextWidget(gui, -150)
+    if GuiButton(gui, 13132313213324, (screen_width / 2) - (text_width / 2), 0, yes) then
+      announced = true
+      ModSettingSet(VALUES.DANGER_ANNOUNCE, announced)
+    end
+    GuiLayoutEnd(gui)
+    GuiEndAutoBoxNinePiece(gui)
+    GuiLayoutEndLayer(gui)
+    GuiZSet(gui, 0)
+  end
+end
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
 -- executer
 -- this variables set when initialized
 local main_menu_widget_info = {
@@ -784,8 +843,8 @@ function ModSettingsGui(gui, in_main_menu)
   = GuiGetPreviousWidgetInfo(gui)
   GuiLayoutEndLayer(gui)
   GuiZSet(gui, 0)
-  -- is_initialized = true
-  -- end
+
+  draw_danger_announce(gui)
 
   if perk_gui_id == VALUES.PERK_GUI.BAN_SELECT then
     draw_perk_ban_box(gui, main_menu_widget_info)
