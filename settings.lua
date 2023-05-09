@@ -31,8 +31,8 @@ local VALUES = {
 local function description()
   local noita_remover_description_en = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
       "==Important==" .. "\n" ..
+      "In some cases, \nwhen settings are changed during the game, spells suddenly become unavailable.\n" ..
       "Excluding all perks/spells is not expected on Noita's part.\n" ..
-      "For example, if you exclude all perks, \nthe progress display will be incorrect and an internal error will occur \n(Noita will not crash).\n" ..
       "Please note that unforeseen events may occur.\n \n" ..
       "==How to use==" .. "\n" ..
       "You can ban from left and right window.\n" ..
@@ -47,8 +47,8 @@ local function description()
 
   local noita_remover_description_ja = "==はじめに==\n下にある「適応して戻る」ボタンを押すのを忘れないでください\n \n" ..
       "== 重要事項 ==" .. "\n" ..
+      "ゲーム中に設定を変更すると、スペルが突然使えなくなるケースがあります。\n" ..
       "全てのパーク、スペルを除外されることを Noita 側は想定していません。\n" ..
-      "例えば、全てのパークを除外すると、\nメニューを開いたときや進行を確認したときに裏でエラーがでます\n（Noita 自体は落ちないのでそこは大丈夫です）。\n" ..
       "想定外の事象が発生する可能性があることにご留意ください。\n \n" ..
       "== 大まかな使い方 ==" .. "\n" ..
       "左右にある枠より設定が可能です。\n" ..
@@ -100,9 +100,9 @@ mod_settings =
         ui_name = ">Selected GUI",
         ui_description = "The selected GUI is displayed on the left.",
         value_default = VALUES.PERK_GUI.BAN_SELECT,
-        values = { { VALUES.PERK_GUI.BAN_SELECT, "Perk Ban List" },
-          { VALUES.PERK_GUI.BAN_POOL,   "Perk Ban Pool List" } },
-        scope = MOD_SETTING_SCOPE_RUNTIME,
+        values = { { VALUES.PERK_GUI.BAN_SELECT, "[1]Perk Ban List" },
+          { VALUES.PERK_GUI.BAN_POOL,   "[2]Perk Ban Pool List" } },
+        scope = MOD_SETTING_SCOPE_NEW_GAME,
         change_fn = switch_perk_gui_callback,
       },
     },
@@ -116,9 +116,9 @@ mod_settings =
         ui_name = ">Selected GUI",
         ui_description = "The selected GUI is displayed on the right.",
         value_default = VALUES.SPELL_GUI.BAN_SELECT,
-        values = { { VALUES.SPELL_GUI.BAN_SELECT, "Spell Ban List" },
-          { VALUES.SPELL_GUI.BAN_POOL,   "Spell Ban Pool List" } },
-        scope = MOD_SETTING_SCOPE_RUNTIME,
+        values = { { VALUES.SPELL_GUI.BAN_SELECT, "[1]Spell Ban List" },
+          { VALUES.SPELL_GUI.BAN_POOL,   "[2]Spell Ban Pool List" } },
+        scope = MOD_SETTING_SCOPE_NEW_GAME,
         change_fn = switch_spell_gui_callback,
       },
     },
@@ -164,7 +164,6 @@ local year, month, day, hour, minute, second = GameGetDateAndTimeUTC()
 local date = tonumber(tostring(year) ..
   tostring(month) .. tostring(day) .. tostring(hour) .. tostring(minute) .. tostring(second))
 math.randomseed(date)
-
 ---------------------------------------------------------
 
 
@@ -517,7 +516,7 @@ local function draw_perk_ban_box(gui, main_menu_widget_info)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
-  GuiText(gui, 0, 0, "Perk Ban List")
+  GuiText(gui, 0, 0, "[1]Perk Ban List")
   GuiText(gui, 0, 0, "Banned Perks: " .. perk_ban_count)
   GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
   GuiText(gui, 0, 3, "Last Banned Perk:")
@@ -601,7 +600,7 @@ local function draw_perk_ban_pool_box(gui, main_menu_widget_info)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
-  GuiText(gui, 0, 0, "Perk Ban Pool List")
+  GuiText(gui, 0, 0, "[2]Perk Ban Pool List")
   GuiText(gui, 0, 0, "=========================")
   if GuiButton(gui, add_all_perk_button_id, 0, 0, ">Include All Perks") then
     for _, row in ipairs(perk_gui_rows) do
@@ -644,7 +643,7 @@ local function draw_spell_ban_box(gui, main_menu_widget_info)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
-  GuiText(gui, 0, 0, "Spell Ban List")
+  GuiText(gui, 0, 0, "[1]Spell Ban List")
   GuiText(gui, 0, 0, "Banned Spells: " .. spell_ban_count)
   GuiLayoutBeginHorizontal(gui, 0, 0, false, 3);
   GuiText(gui, 0, 3, "Last Banned Spell:")
@@ -728,7 +727,7 @@ local function draw_spell_ban_pool_box(gui, main_menu_widget_info)
   GuiLayoutBeginVertical(gui, 0, 0)
 
   -- In Box rendering
-  GuiText(gui, 0, 0, "Spell Ban Pool List")
+  GuiText(gui, 0, 0, "[2]Spell Ban Pool List")
   GuiText(gui, 0, 0, "=========================")
   if GuiButton(gui, add_all_spell_button_id, 0, 0, ">Include All Spells") then
     for _, row in ipairs(spell_gui_rows) do
