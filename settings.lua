@@ -130,11 +130,11 @@ end
 ---------------------------------------------------------
 -- Current GUI ID
 
-local perk_gui_id = VALUES.PERK_GUI.BAN_SELECT
+local perk_gui_id = ModSettingGet('current_perk_gui') or VALUES.PERK_GUI.BAN_SELECT
 local function switch_perk_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
   perk_gui_id = new_value
 end
-local spell_gui_id = VALUES.SPELL_GUI.BAN_SELECT
+local spell_gui_id = ModSettingGet('current_spell_gui') or VALUES.SPELL_GUI.BAN_SELECT
 local function switch_spell_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
   spell_gui_id = new_value
 end
