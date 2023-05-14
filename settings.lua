@@ -130,13 +130,16 @@ end
 ---------------------------------------------------------
 -- Current GUI ID
 
-local perk_gui_id = ModSettingGet('current_perk_gui') or VALUES.PERK_GUI.BAN_SELECT
+local perk_gui_id = ModSettingGet('noita-remover.current_perk_gui') or VALUES.PERK_GUI.BAN_SELECT
+print(perk_gui_id)
 local function switch_perk_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
   perk_gui_id = new_value
+  ModSettingSet('noita-remover.current_perk_gui', new_value)
 end
-local spell_gui_id = ModSettingGet('current_spell_gui') or VALUES.SPELL_GUI.BAN_SELECT
+local spell_gui_id = ModSettingGet('noita-remover.current_spell_gui') or VALUES.SPELL_GUI.BAN_SELECT
 local function switch_spell_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
   spell_gui_id = new_value
+  ModSettingSet('noita-remover.current_spell_gui', new_value)
 end
 ---------------------------------------------------------
 
@@ -156,7 +159,7 @@ mod_settings =
         value_default = VALUES.PERK_GUI.BAN_SELECT,
         values = { { VALUES.PERK_GUI.BAN_SELECT, "[1]Perk Ban List" },
           { VALUES.PERK_GUI.BAN_POOL,   "[2]Perk Ban Pool List" } },
-        scope = MOD_SETTING_SCOPE_NEW_GAME,
+        scope = MOD_SETTING_SCOPE_RUNTIME,
         change_fn = switch_perk_gui_callback,
       },
     },
@@ -172,7 +175,7 @@ mod_settings =
         value_default = VALUES.SPELL_GUI.BAN_SELECT,
         values = { { VALUES.SPELL_GUI.BAN_SELECT, "[1]Spell Ban List" },
           { VALUES.SPELL_GUI.BAN_POOL,   "[2]Spell Ban Pool List" } },
-        scope = MOD_SETTING_SCOPE_NEW_GAME,
+        scope = MOD_SETTING_SCOPE_RUNTIME,
         change_fn = switch_spell_gui_callback,
       },
     },
