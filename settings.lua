@@ -401,6 +401,7 @@ local dummy_ui_id = NewID()
 local perk_scroll_container_id = NewID()
 local remove_all_perk_button_id = NewID()
 local add_all_perk_button_id = NewID()
+local swap_perk_button_id = NewID()
 local remove_random_perk_button_id = NewID()
 
 local perk_gui_rows = {}
@@ -481,6 +482,7 @@ end
 local spell_scroll_container_id = NewID()
 local remove_all_spell_button_id = NewID()
 local add_all_spell_button_id = NewID()
+local swap_spell_button_id = NewID()
 local remove_random_spell_button_id = NewID()
 
 local spell_gui_rows = {}
@@ -629,6 +631,26 @@ local function draw_perk_ban_box(gui, main_menu_widget_info)
     end
     ban_count()
   end
+
+  if GuiButton(gui, swap_perk_button_id, 0, 0, ">Swap Banned/Unbanned Perks") then
+    for _, row in ipairs(perk_gui_rows) do
+      for _, perk in ipairs(row) do
+        local ban_state = ModSettingGet(perk.ban_state_name)
+        if ban_state == nil then
+          ban_state = false
+        end
+        ModSettingSet(perk.ban_state_name, not ban_state)
+
+        local ban_key = ModSettingGet(perk.ban_key)
+        if ban_key == nil then
+          ban_key = false
+        end
+        ModSettingSet(perk.ban_key, not ban_key)
+      end
+    end
+    ban_count()
+  end
+
   perk_icon(gui)
 
   GuiLayoutEnd(gui)
@@ -756,6 +778,27 @@ local function draw_spell_ban_box(gui, main_menu_widget_info)
     end
     ban_count()
   end
+
+  if GuiButton(gui, swap_spell_button_id, 0, 0, ">Swap Banned/Unbanned Spells") then
+    for _, row in ipairs(spell_gui_rows) do
+      for _, spell in ipairs(row) do
+        local ban_state = ModSettingGet(spell.ban_state_name)
+        if ban_state == nil then
+          ban_state = false
+        end
+        ModSettingSet(spell.ban_state_name, not ban_state)
+
+        local ban_key = ModSettingGet(spell.ban_key)
+        if ban_key == nil then
+          ban_key = false
+        end
+        ModSettingSet(spell.ban_key, not ban_key)
+      end
+    end
+    ban_count()
+  end
+
+
   spell_icon(gui)
 
   GuiLayoutEnd(gui)
