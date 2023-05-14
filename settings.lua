@@ -352,13 +352,12 @@ function GuiToggleImageEnableButton(
 
   local blank = ''
 
-  if GameTextGet("$current_language") == "English" then
-    for i = 0, math.floor(w / 4) do
+  if is_multi_byte_language() then
+    for i = 0, math.floor(w / 2) do
       blank = blank .. ' '
     end
-  end
-  if GameTextGet("$current_language") == "日本語" then
-    for i = 0, math.floor(w / 2) do
+  else
+    for i = 0, math.floor(w / 4) do
       blank = blank .. ' '
     end
   end
