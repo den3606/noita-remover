@@ -30,13 +30,56 @@ local VALUES = {
 ---------------------------------------------------------
 -- Localise
 local function language()
-  if GameTextGet("$current_language") == "English" then
+  local current_language = GameTextGet("$current_language")
+  if current_language == "English" then
     return 'en'
   end
-  if GameTextGet("$current_language") == "日本語" then
+  if current_language == "русский" then
+    return 'ru'
+  end
+  if current_language == "Português (Brasil)" then
+    return 'pt-br'
+  end
+  if current_language == "Español" then
+    return 'es-es'
+  end
+  if current_language == "Deutsch" then
+    return 'de'
+  end
+  if current_language == "Français" then
+    return 'fr-fr'
+  end
+  if current_language == "Italiano" then
+    return 'it'
+  end
+  if current_language == "Polska" then
+    return 'pl'
+  end
+  if current_language == "简体中文" then
+    return 'zh-cn'
+  end
+  if current_language == "日本語" then
     return 'ja'
   end
+  if current_language == "한국어" then
+    return 'ko'
+  end
+
   return 'en'
+end
+
+local function is_multi_byte_language()
+  if language() == 'ja' then
+    return true
+  end
+  if language() == 'ko' then
+    return true
+  end
+  if language() == 'zh-cn' then
+    return true
+  end
+
+  return false
 end
 
 local function description()
@@ -265,13 +308,12 @@ function GuiToggleImageDisableButton(
 
   local blank = ''
 
-  if GameTextGet("$current_language") == "English" then
-    for i = 0, math.floor(w / 4) do
+  if is_multi_byte_language() then
+    for i = 0, math.floor(w / 2) do
       blank = blank .. ' '
     end
-  end
-  if GameTextGet("$current_language") == "日本語" then
-    for i = 0, math.floor(w / 2) do
+  else
+    for i = 0, math.floor(w / 4) do
       blank = blank .. ' '
     end
   end
