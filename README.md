@@ -8,4 +8,4 @@ This MOD can remove Perks and Spells before start game.
 ## LICENSE
 
 - [Noita MOD Rules](docs/NOITA_MOD_RULES.md)
-- [This Project License](docs/LICENSE.md)
+- [This Project License](docs/LICENSE)

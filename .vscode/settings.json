@@ -1,3 +1,8 @@
 {
-  "Lua.diagnostics.globals": ["perk_list", "actions"]
+  "Lua.diagnostics.globals": [
+    "perk_list",
+    "actions",
+    "noita_remover_perks",
+    "noita_remover_spells"
+  ]
 }

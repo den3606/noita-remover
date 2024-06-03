@@ -1,8 +1,7 @@
 dofile("data/scripts/lib/mod_settings.lua")
 dofile_once("data/scripts/perks/perk_list.lua")
 dofile_once("data/scripts/gun/gun_actions.lua")
-
-
+local Json = dofile_once("mods/noita-remover/files/scripts/lib/jsonlua/json.lua")
 
 ---------------------------------------------------------
 -- VALUES
@@ -14,6 +13,9 @@ local VALUES = {
   PERK_BAN_POOL_PREFIX = 'noita-remover.perk-ban-pool.',
   SPELL_BAN_PREFIX = 'noita-remover.spell-ban.',
   SPELL_BAN_POOL_PREFIX = 'noita-remover.spell-ban-pool.',
+  PERK_BAN_LIST_KEY = 'noita-remover.perk-ban-list-key',
+  SPELL_BAN_LIST_KEY = 'noita-remover.spell-ban-list-key',
+  WANT_TO_RELOAD_KEY = 'noita-remover.want-to-reload',
   PERK_GUI = {
     BAN_SELECT = 'perk_ban',
     BAN_POOL = 'perk_ban_pool',
@@ -23,6 +25,36 @@ local VALUES = {
     BAN_POOL = 'spell_ban_pool',
   }
 }
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
+-- BAN LIST
+-- NOTE:
+-- The ban list needs to retain content added by mods,
+-- so it should be kept separate from the original actions/perk_list that will be deleted.
+-- The update process is in the gun_action/perk_list file.
+local function define_ban_list()
+  local encoded_spell_ban_list_json = ModSettingGet(VALUES.SPELL_BAN_LIST_KEY) or "{}"
+  if encoded_spell_ban_list_json == "{}" then
+    noita_remover_spells = actions
+  else
+    -- In game list
+    noita_remover_spells = Json.decode(encoded_spell_ban_list_json)
+  end
+
+
+  local encoded_perk_ban_list_json = ModSettingGet(VALUES.PERK_BAN_LIST_KEY) or "{}"
+  if encoded_perk_ban_list_json == "{}" then
+    noita_remover_perks = perk_list
+  else
+    -- In game list
+    noita_remover_perks = Json.decode(encoded_perk_ban_list_json)
+  end
+end
+
+define_ban_list()
 ---------------------------------------------------------
 
 
@@ -92,28 +124,18 @@ local function description()
       "You can ban from left and right window.\n" ..
       "Left is perks, rihgt is spells.\n" ..
       "Ban perks/spells are enabled when Noita initialized (start new game).\n" ..
-      "Banned items will be darkened. Unbanned items will be brighter.\n \n" ..
-      "==Random BAN==" .. "\n" ..
-      "By default, a random draw is made among all Perk/Spells.\n" ..
-      "You can select Spell/Perk for the Random BAN \nby changing the GUI from the Selected GUI in the main window.\n" ..
-      "(\"Perk Ban Pool List\" window).\n" ..
-      "In this window, Perks targeted for BAN are brightly displayed.\n"
+      "Banned items will be darkened. Unbanned items will be brighter.\n \n"
 
   local noita_remover_description_ja = "==はじめに==\n下にある「適応して戻る」ボタンを押すのを忘れないでください\n \n" ..
       "== 重要事項 ==" .. "\n" ..
       "ゲーム中に設定を変更すると、スペルが突然使えなくなるケースがあります。\n" ..
-      "全てのパーク、スペルを除外されることを Noita 側は想定していません。\n" ..
+      "全てのスペル、パークを除外されることを Noita 側は想定していません。\n" ..
       "想定外の事象が発生する可能性があることにご留意ください。\n \n" ..
       "== 大まかな使い方 ==" .. "\n" ..
       "左右にある枠より設定が可能です。\n" ..
       "左にはパーク、右には呪文の設定があります。\n" ..
-      "BAN したパーク、スペルは Noita を始めたときに適応されます\n（新規ゲームを始めたとき）\n" ..
-      "利用できるものは明るく、\n利用できないもの（BANされているもの）は暗くなります\n \n" ..
-      "== ランダム BAN について ==" .. "\n" ..
-      "デフォルトでは、全 Perk/Spell の中からランダムで抽選が行われます。\n" ..
-      "メイン項目の Selected GUI から、GUIを変更することで\nRnadom BAN の対象 Spell/Perk を選択できます。\n" ..
-      "（Perk Ban Pool List画面）\n" ..
-      "この画面では、BAN 対象となる Perk が明るく表示されます。\n"
+      "BAN したスペル、パークは Noita を始めたときに適応されます\n（新規ゲームを始めたとき）\n" ..
+      "利用できるものは明るく、\n利用できないもの（BANされているもの）は暗くなります\n \n"
 
   if language() == "en" then
     return noita_remover_description_en
@@ -123,86 +145,70 @@ local function description()
   end
   return noita_remover_description_en
 end
+
+local function option_description()
+  local noita_remover_option_description_en = "==Random BAN==" .. "\n" ..
+      "By default, a random draw is made among all Perk/Spells.\n" ..
+      "You can select Spell/Perk for the Random BAN \nby changing the GUI from the Selected GUI in the main window.\n" ..
+      "(\"Perk Ban Pool List\" window).\n" ..
+      "In this window, Perks targeted for BAN are brightly displayed.\n \n" ..
+      "==Modded Spells/Perks BAN==" .. "\n" ..
+      "If you want to ban spells or perks created by mods,\nyou need to start the game to load the mods. \n" ..
+      "For details, please refer to the “For Modding Setup” section.\n" ..
+      "I have added support for MOD, \nbut I cannot guarantee that it will work with all extended MODs."
+
+  local noita_remover_option_description_ja = "== ランダム BAN について ==" .. "\n" ..
+      "デフォルトでは、全スペル、パークの中からランダムで抽選が行われます。\n" ..
+      "メイン項目の Selected GUI から、GUIを変更することで\nRnadom BAN の対象 Spell/Perk を選択できます。\n" ..
+      "（Perk Ban Pool List画面）\n" ..
+      "この画面では、BAN 対象となる Perk が明るく表示されます。\n \n" ..
+      "== MODのSpell/Perk BAN ==" .. "\n" ..
+      "MOD で作成されたスペル、パークを BAN したい場合、\n一度ゲームを起動して対象のMODを読み込ませる必要があります。\n" ..
+      "詳細は「For Modding Setup」の項目をご確認ください。\n" ..
+      "MOD に対応させましたが、全ての拡張MODで動作することは保証できません。"
+
+  if language() == "en" then
+    return noita_remover_option_description_en
+  end
+  if language() == "ja" then
+    return noita_remover_option_description_ja
+  end
+  return noita_remover_option_description_en
+end
+
+local function modding_setup_description()
+  local noita_remover_option_description_en =
+      "This is a setting if you want to ban a mod perk/spell.\n" ..
+      "1. Turn on the mod that contains the spell/perk you want to BAN\n" ..
+      "2. Place noita-remover on top of all extension mods\n" ..
+      "3. Click on \"Reload perk/spell list at the next new game\"\n" ..
+      "4. Start New Game(Other mods are loaded at this time)\n" ..
+      "5. Click on \"Refresh perk/spell list\"\n\n" ..
+      "Thereafter, it will continue to be displayed unless the mod configuration is changed\n"
+
+  local noita_remover_option_description_ja =
+      "MODのperk/spellをBANしたい場合の設定です。\n" ..
+      "1. BANしたいスペル/パークを含むMODをONにしてください\n" ..
+      "2. ONにした全てのMODよりもnoita-removerを上に移動させてください\n" ..
+      "3. 「Reload perk/spell list at the next new game」をクリックしてください\n" ..
+      "4. 「新規ゲーム」を開始してください（このときに他のMODが読み込まれます）\n" ..
+      "5. 「Refresh perk/spell list」をクリックしてください\n\n" ..
+      "全てを実施し終えると、MODの構成を変えない限りMODのアイテムが表示されます\n"
+
+  if language() == "en" then
+    return noita_remover_option_description_en
+  end
+  if language() == "ja" then
+    return noita_remover_option_description_ja
+  end
+  return noita_remover_option_description_en
+end
 ---------------------------------------------------------
 
 
 
----------------------------------------------------------
--- Current GUI ID
-
-local perk_gui_id = ModSettingGet('noita-remover.current_perk_gui') or VALUES.PERK_GUI.BAN_SELECT
-print(perk_gui_id)
-local function switch_perk_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
-  perk_gui_id = new_value
-  ModSettingSet('noita-remover.current_perk_gui', new_value)
-end
-local spell_gui_id = ModSettingGet('noita-remover.current_spell_gui') or VALUES.SPELL_GUI.BAN_SELECT
-local function switch_spell_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
-  spell_gui_id = new_value
-  ModSettingSet('noita-remover.current_spell_gui', new_value)
-end
----------------------------------------------------------
 
 
-local mod_id = "noita-remover" -- This should match the name of your mod's folder.
-mod_settings_version = 1       -- This is a magic global that can be used to migrate settings to new mod versions. call mod_settings_get_version() before mod_settings_update() to get the old value.
-mod_settings =
-{
-  {
-    category_id = "group_of_perk_settings",
-    ui_name = "Perk GUI Settings",
-    settings = {
-      {
-        id = "current_perk_gui",
-        ui_name = ">Selected GUI",
-        ui_description = "The selected GUI is displayed on the left.",
-        value_default = VALUES.PERK_GUI.BAN_SELECT,
-        values = { { VALUES.PERK_GUI.BAN_SELECT, "[1]Perk Ban List" },
-          { VALUES.PERK_GUI.BAN_POOL,   "[2]Perk Ban Pool List" } },
-        scope = MOD_SETTING_SCOPE_RUNTIME,
-        change_fn = switch_perk_gui_callback,
-      },
-    },
-  },
-  {
-    category_id = "group_of_spell_settings",
-    ui_name = "Spell GUI Settings",
-    settings = {
-      {
-        id = "current_spell_gui",
-        ui_name = ">Selected GUI",
-        ui_description = "The selected GUI is displayed on the right.",
-        value_default = VALUES.SPELL_GUI.BAN_SELECT,
-        values = { { VALUES.SPELL_GUI.BAN_SELECT, "[1]Spell Ban List" },
-          { VALUES.SPELL_GUI.BAN_POOL,   "[2]Spell Ban Pool List" } },
-        scope = MOD_SETTING_SCOPE_RUNTIME,
-        change_fn = switch_spell_gui_callback,
-      },
-    },
-  },
-  {
-    category_id = "group_of_description",
-    ui_name = "Noita Remover Description",
-    foldable = true,
-    _folded = true,
-    settings = {
-      {
-        id = "noita-remover-description",
-        ui_name = description(),
-        not_setting = true,
-      },
-    },
-  },
-}
-
-function ModSettingsUpdate(init_scope)
-  local old_version = mod_settings_get_version(mod_id)
-  mod_settings_update(mod_id, mod_settings, init_scope)
-end
-
-function ModSettingsGuiCount()
-  return mod_settings_gui_count(mod_id, mod_settings)
-end
 
 ---------------------------------------------------------
 ---------------------------------------------------------
@@ -235,8 +241,8 @@ local spell_ban_count = 0
 local function ban_count()
   local function perk_ban_counter()
     local count = 0
-    for i = #perk_list, 1, -1 do
-      local perk = perk_list[i]
+    for i = #noita_remover_perks, 1, -1 do
+      local perk = noita_remover_perks[i]
 
       if ModSettingGet(VALUES.PERK_BAN_PREFIX .. perk.id) or false then
         count = count + 1
@@ -247,8 +253,8 @@ local function ban_count()
 
   local function spell_ban_counter()
     local count = 0
-    for i = #actions, 1, -1 do
-      local spell = actions[i]
+    for i = #noita_remover_spells, 1, -1 do
+      local spell = noita_remover_spells[i]
 
       if ModSettingGet(VALUES.SPELL_BAN_PREFIX .. spell.id) or false then
         count = count + 1
@@ -306,7 +312,7 @@ end
 -- 各言語によってスペースの扱い勝ちが言うので、調整が必要
 -- 暗い状態が選択中、明るい状態が未選択
 function GuiToggleImageDisableButton(
-  gui, image_id, button_id, icon_path, state_name, enabled_fn, disabled_fn)
+    gui, image_id, button_id, icon_path, state_name, enabled_fn, disabled_fn)
   local w, h = GuiGetImageDimensions(gui, icon_path, 1)
 
   local blank = ''
@@ -350,7 +356,7 @@ end
 -- 各言語によってスペースの扱い勝ちが言うので、調整が必要
 -- 明るい状態が選択中、暗い状態が未選択
 function GuiToggleImageEnableButton(
-  gui, image_id, button_id, icon_path, state_name, enabled_fn, disabled_fn)
+    gui, image_id, button_id, icon_path, state_name, enabled_fn, disabled_fn)
   local w, h = GuiGetImageDimensions(gui, icon_path, 1)
 
   local blank = ''
@@ -410,32 +416,32 @@ local remove_random_perk_button_id = NewID()
 local perk_gui_rows = {}
 local perk_row = {}
 
-for i = 1, #perk_list do
+for i = 1, #noita_remover_perks do
   table.insert(perk_row, {
-    icon_path = perk_list[i].perk_icon,
+    icon_path = noita_remover_perks[i].perk_icon,
     ban_image_id = NewID(),
     ban_button_id = NewID(),
-    ban_key = VALUES.PERK_BAN_PREFIX .. perk_list[i].id,
-    ban_state_name = VALUES.PERK_BAN_PREFIX .. perk_list[i].perk_icon,
+    ban_key = VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id,
+    ban_state_name = VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].perk_icon,
     banned_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_PREFIX .. perk_list[i].id, true)
+      ModSettingSet(VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id, true)
       ban_count()
-      last_selected_perk_path = perk_list[i].perk_icon
+      last_selected_perk_path = noita_remover_perks[i].perk_icon
     end,
     unbanned_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_PREFIX .. perk_list[i].id, false)
+      ModSettingSet(VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id, false)
       ban_count()
     end,
     ban_pool_image_id = NewID(),
     ban_pool_button_id = NewID(),
-    ban_pool_key = VALUES.PERK_BAN_POOL_PREFIX .. perk_list[i].id,
+    ban_pool_key = VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id,
     ban_pool_state_name =
-        VALUES.PERK_BAN_PREFIX .. VALUES.PERK_BAN_POOL_PREFIX .. perk_list[i].perk_icon,
+        VALUES.PERK_BAN_PREFIX .. VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].perk_icon,
     include_from_ban_pool_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. perk_list[i].id, true)
+      ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id, true)
     end,
     exclude_from_ban_pool_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. perk_list[i].id, false)
+      ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id, false)
     end,
   })
   if i % 6 == 0 then
@@ -491,41 +497,54 @@ local remove_random_spell_button_id = NewID()
 local spell_gui_rows = {}
 local spell_row = {}
 
-for i = 1, #actions do
-  table.insert(spell_row, {
-    ban_key = VALUES.SPELL_BAN_PREFIX .. actions[i].id,
-    ban_image_id = NewID(),
-    ban_button_id = NewID(),
-    icon_path = actions[i].sprite,
-    ban_state_name = VALUES.SPELL_BAN_PREFIX .. actions[i].sprite,
-    banned_fn = function()
-      ModSettingSet(VALUES.SPELL_BAN_PREFIX .. actions[i].id, true)
-      ban_count()
-      last_selected_spell_path = actions[i].sprite
-    end,
-    unbanned_fn = function()
-      ModSettingSet(VALUES.SPELL_BAN_PREFIX .. actions[i].id, false)
-      ban_count()
-    end,
-    ban_pool_image_id = NewID(),
-    ban_pool_button_id = NewID(),
-    ban_pool_key = VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].id,
-    ban_pool_state_name =
-        VALUES.SPELL_BAN_PREFIX .. VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].sprite,
-    include_from_ban_pool_fn = function()
-      ModSettingSet(VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].id, true)
-    end,
-    exclude_from_ban_pool_fn = function()
-      ModSettingSet(VALUES.SPELL_BAN_POOL_PREFIX .. actions[i].id, false)
-    end,
-  })
-  if i % 6 == 0 then
-    table.insert(spell_gui_rows, spell_row)
-    spell_row = {}
+local function start_ban_item_system()
+  spell_gui_rows = {}
+  spell_row = {}
+  local insert_count = 0
+  for i = 1, #noita_remover_spells do
+    if noita_remover_spells[i].id ~= nil or noita_remover_spells[i].sprite ~= nil then
+      print(noita_remover_spells[i].id)
+      table.insert(spell_row, {
+        ban_key = VALUES.SPELL_BAN_PREFIX .. noita_remover_spells[i].id,
+        ban_image_id = NewID(),
+        ban_button_id = NewID(),
+        icon_path = noita_remover_spells[i].sprite,
+        ban_state_name = VALUES.SPELL_BAN_PREFIX .. noita_remover_spells[i].sprite,
+        banned_fn = function()
+          ModSettingSet(VALUES.SPELL_BAN_PREFIX .. noita_remover_spells[i].id, true)
+          ban_count()
+          last_selected_spell_path = noita_remover_spells[i].sprite
+        end,
+        unbanned_fn = function()
+          ModSettingSet(VALUES.SPELL_BAN_PREFIX .. noita_remover_spells[i].id, false)
+          ban_count()
+        end,
+        ban_pool_image_id = NewID(),
+        ban_pool_button_id = NewID(),
+        ban_pool_key = VALUES.SPELL_BAN_POOL_PREFIX .. noita_remover_spells[i].id,
+        ban_pool_state_name =
+            VALUES.SPELL_BAN_PREFIX .. VALUES.SPELL_BAN_POOL_PREFIX .. noita_remover_spells[i]
+            .sprite,
+        include_from_ban_pool_fn = function()
+          ModSettingSet(VALUES.SPELL_BAN_POOL_PREFIX .. noita_remover_spells[i].id, true)
+        end,
+        exclude_from_ban_pool_fn = function()
+          ModSettingSet(VALUES.SPELL_BAN_POOL_PREFIX .. noita_remover_spells[i].id, false)
+        end,
+      })
+      insert_count = insert_count + 1
+    end
+    if insert_count % 6 == 0 then
+      table.insert(spell_gui_rows, spell_row)
+      spell_row = {}
+    end
   end
+  -- 最後に割り切れなかったspellsを挿入する
+  table.insert(spell_gui_rows, spell_row)
 end
--- 最後に割り切れなかったspellsを挿入する
-table.insert(spell_gui_rows, spell_row)
+
+start_ban_item_system()
+
 
 
 local function spell_icon(gui)
@@ -904,7 +923,154 @@ end
 
 
 ---------------------------------------------------------
--- executer
+-- Setting callbacks
+
+local perk_gui_id = ModSettingGet('noita-remover.current_perk_gui') or VALUES.PERK_GUI.BAN_SELECT
+local function switch_perk_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  perk_gui_id = new_value
+  ModSettingSet('noita-remover.current_perk_gui', new_value)
+end
+local spell_gui_id = ModSettingGet('noita-remover.current_spell_gui') or VALUES.SPELL_GUI.BAN_SELECT
+local function switch_spell_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  spell_gui_id = new_value
+  ModSettingSet('noita-remover.current_spell_gui', new_value)
+end
+local function want_to_reload_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  ModSettingSet(VALUES.WANT_TO_RELOAD_KEY, true)
+end
+
+local function want_to_refresh_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  define_ban_list()
+  start_ban_item_system()
+end
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
+-- Settings
+local mod_id = "noita-remover" -- This should match the name of your mod's folder.
+mod_settings_version = 1       -- This is a magic global that can be used to migrate settings to new mod versions. call mod_settings_get_version() before mod_settings_update() to get the old value.
+mod_settings =
+{
+  {
+    category_id = "group_of_perk_settings",
+    ui_name = "Perk GUI Settings",
+    settings = {
+      {
+        id = "current_perk_gui",
+        ui_name = ">Selected GUI",
+        ui_description = "The selected GUI is displayed on the left.",
+        value_default = VALUES.PERK_GUI.BAN_SELECT,
+        values = { { VALUES.PERK_GUI.BAN_SELECT, "[1]Perk Ban List" },
+          { VALUES.PERK_GUI.BAN_POOL,   "[2]Perk Ban Pool List" } },
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+        change_fn = switch_perk_gui_callback,
+      },
+    },
+  },
+  {
+    category_id = "group_of_spell_settings",
+    ui_name = "Spell GUI Settings",
+    settings = {
+      {
+        id = "current_spell_gui",
+        ui_name = ">Selected GUI",
+        ui_description = "The selected GUI is displayed on the right.",
+        value_default = VALUES.SPELL_GUI.BAN_SELECT,
+        values = { { VALUES.SPELL_GUI.BAN_SELECT, "[1]Spell Ban List" },
+          { VALUES.SPELL_GUI.BAN_POOL,   "[2]Spell Ban Pool List" } },
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+        change_fn = switch_spell_gui_callback,
+      },
+    },
+  },
+  {
+    category_id = "group_of_description",
+    ui_name = "Noita Remover Description",
+    foldable = true,
+    _folded = true,
+    settings = {
+      {
+        id = "noita-remover-description",
+        ui_name = description(),
+        not_setting = true,
+      },
+    },
+  },
+  {
+    category_id = "group_of_description",
+    ui_name = "Noita Remover Option Description",
+    foldable = true,
+    _folded = true,
+    settings = {
+      {
+        id = "noita-remover-option-description",
+        ui_name = option_description(),
+        not_setting = true,
+      },
+    },
+  },
+  {
+    category_id = "group_of_perk_settings",
+    ui_name = "For Modding Setup",
+    foldable = true,
+    _folded = true,
+    settings = {
+      {
+        id = "want_to_reload_button",
+        ui_name = ">1. Reload perk/spell list at the next new game",
+        ui_description = "When you want to BAN Mod spell/perk, Click this and restart new game",
+        value_default = "dummy",
+        values = {
+          { "dummy", "" },
+          { "dummy", "" }
+        },
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+        change_fn = want_to_reload_callback,
+      },
+      {
+        id = "refresh_perk_and_spell_list_gui",
+        ui_name = ">2. Refresh perk/spell list",
+        ui_description =
+        "If the perk/spell list has already been reloaded, Click this to refresh the GUI",
+        value_default = "dummy",
+        values = {
+          { "dummy", "" },
+          { "dummy", "" }
+        },
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+        change_fn = want_to_refresh_gui_callback,
+      },
+      {
+        id = "noita_remover_space_summy",
+        ui_name = " ",
+        not_setting = true,
+      },
+      {
+        id = "noita_remover_mod_load_description",
+        ui_name = modding_setup_description(),
+        not_setting = true,
+      },
+    }
+  },
+}
+
+function ModSettingsUpdate(init_scope)
+  local old_version = mod_settings_get_version(mod_id)
+  mod_settings_update(mod_id, mod_settings, init_scope)
+end
+
+function ModSettingsGuiCount()
+  return mod_settings_gui_count(mod_id, mod_settings)
+end
+
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
+-- GUI Output
 -- this variables set when initialized
 local main_menu_widget_info = {
   x = 0,
