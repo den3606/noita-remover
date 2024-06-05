@@ -1,9 +1,8 @@
 local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
-local Json = dofile_once("mods/noita-remover/files/scripts/lib/jsonlua/json.lua")
 
 local want_to_refresh = ModSettingGet(VALUES.WANT_TO_RELOAD_KEY) or false
 if not want_to_refresh then
-  -- リフレッシュを希望していない場合は削除処理を実施する
+  -- BANが可能な場合は削除処理を実施する
   for i = #perk_list, 1, -1 do
     local perk = perk_list[i]
     local banned = ModSettingGet(VALUES.PERK_BAN_PREFIX .. perk.id) or false
@@ -46,7 +45,7 @@ if #perk_list == 0 then
     id = "DUMMY",
     ui_name = "$noita_remover_perk_dummy",
     ui_description = "$noita_remover_perk_dummy",
-    sprite = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
+    ui_icon = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
     perk_icon = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
     game_effect = "",
     particle_effect = "",
