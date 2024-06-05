@@ -149,23 +149,25 @@ end
 local function option_description()
   local noita_remover_option_description_en = "==Random BAN==" .. "\n" ..
       "By default, a random draw is made among all Perk/Spells.\n" ..
-      "You can select Spell/Perk for the Random BAN \nby changing the GUI from the Selected GUI in the main window.\n" ..
+      "You can select Perk/Spell for the Random BAN \nby changing the GUI from the Selected GUI in the main window.\n" ..
       "(\"Perk Ban Pool List\" window).\n" ..
       "In this window, Perks targeted for BAN are brightly displayed.\n \n" ..
-      "==Modded Spells/Perks BAN==" .. "\n" ..
+      "==Modded Perks/Spells BAN==" .. "\n" ..
       "If you want to ban spells or perks created by mods,\nyou need to start the game to load the mods. \n" ..
       "For details, please refer to the “For Modding Setup” section.\n" ..
-      "I have added support for MOD, \nbut I cannot guarantee that it will work with all extended MODs."
+      "I have added support for MOD, \nbut I cannot guarantee that it will work with all extended MODs.\n" ..
+      "Also, mod items can only be banned in-game. \n(since no other mods are loaded in the mod settings screen on the menu screen)"
 
   local noita_remover_option_description_ja = "== ランダム BAN について ==" .. "\n" ..
       "デフォルトでは、全スペル、パークの中からランダムで抽選が行われます。\n" ..
-      "メイン項目の Selected GUI から、GUIを変更することで\nRnadom BAN の対象 Spell/Perk を選択できます。\n" ..
+      "メイン項目の Selected GUI から、GUIを変更することで\nRnadom BAN の対象スペル、パークを選択できます。\n" ..
       "（Perk Ban Pool List画面）\n" ..
       "この画面では、BAN 対象となる Perk が明るく表示されます。\n \n" ..
-      "== MODのSpell/Perk BAN ==" .. "\n" ..
+      "== MOD の Perk/Spell BAN ==" .. "\n" ..
       "MOD で作成されたスペル、パークを BAN したい場合、\n一度ゲームを起動して対象のMODを読み込ませる必要があります。\n" ..
       "詳細は「For Modding Setup」の項目をご確認ください。\n" ..
-      "MOD に対応させましたが、全ての拡張MODで動作することは保証できません。"
+      "MOD に対応させましたが、全ての拡張MODで動作することは保証できません。\n" ..
+      "また、MODのアイテムはゲーム内でのみBANが可能となります。\n（メニュー画面のMOD設定画面では他のMODが読み込まれていないため）"
 
   if language() == "en" then
     return noita_remover_option_description_en
@@ -178,22 +180,22 @@ end
 
 local function modding_setup_description()
   local noita_remover_option_description_en =
-      "This is a setting if you want to ban a mod perk/spell.\n" ..
-      "1. Turn on the mod that contains the spell/perk you want to BAN\n" ..
+      "This is a setting if you want to ban a mod Perk/Spell.\n" ..
+      "1. Turn on the mod that contains the Perk/Spell you want to BAN\n" ..
       "2. Place noita-remover on top of all extension mods\n" ..
-      "3. Click on \"Reload perk/spell list at the next new game\"\n" ..
+      "3. Click on \"Reload Perk/Spell list at the next new game\"\n" ..
       "4. Start New Game(Other mods are loaded at this time)\n" ..
-      "5. Click on \"Refresh perk/spell list\"\n\n" ..
-      "Thereafter, it will continue to be displayed unless the mod configuration is changed\n"
+      "5. Click on \"Refresh Perk/Spell list\"\n\n" ..
+      "Once you have done everything, you will see the mod Perk/Spell\n"
 
   local noita_remover_option_description_ja =
       "MODのperk/spellをBANしたい場合の設定です。\n" ..
-      "1. BANしたいスペル/パークを含むMODをONにしてください\n" ..
+      "1. BANしたいパーク/スペルを含むMODをONにしてください\n" ..
       "2. ONにした全てのMODよりもnoita-removerを上に移動させてください\n" ..
       "3. 「Reload perk/spell list at the next new game」をクリックしてください\n" ..
       "4. 「新規ゲーム」を開始してください（このときに他のMODが読み込まれます）\n" ..
       "5. 「Refresh perk/spell list」をクリックしてください\n\n" ..
-      "全てを実施し終えると、MODの構成を変えない限りMODのアイテムが表示されます\n"
+      "全てを実施し終えると、MODのアイテムが表示されます\n"
 
   if language() == "en" then
     return noita_remover_option_description_en
@@ -898,8 +900,8 @@ local function draw_danger_announce(gui)
 
     local screen_width, screen_height = GuiGetScreenDimensions(gui)
     if language() == "ja" then
-      line_1 = 'ゲームプレイ中で既に Noita 世界に生成されているスペル/パークをBANすると、'
-      line_2 = '生成されているスペル/パークが使用できなくなる可能性があります'
+      line_1 = 'ゲームプレイ中で既に Noita 世界に生成されているパーク/スペルをBANすると、'
+      line_2 = '生成されているパーク/スペルが使用できなくなる可能性があります'
       yes = '>理解しました'
     else
       line_1 = 'If you ban an already generated perk or spell during gameplay,'
@@ -1031,7 +1033,7 @@ mod_settings =
       {
         id = "want_to_reload_button",
         ui_name = ">1. Reload perk/spell list at the next new game",
-        ui_description = "When you want to BAN Mod spell/perk, Click this and restart new game",
+        ui_description = "When you want to BAN Mod Perk/Spell, Click this and restart new game",
         value_default = "dummy",
         values = {
           { "dummy", "" },
