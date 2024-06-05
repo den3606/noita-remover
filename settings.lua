@@ -11,9 +11,9 @@ local VALUES = {
   DANGER_ANNOUNCE = 'noita-remover.do-not-edit-in-game.',
   PERK_BAN_PREFIX = 'noita-remover.perk-ban.',
   PERK_BAN_POOL_PREFIX = 'noita-remover.perk-ban-pool.',
+  PERK_BAN_LIST_KEY = 'noita-remover.perk-ban-list-key',
   SPELL_BAN_PREFIX = 'noita-remover.spell-ban.',
   SPELL_BAN_POOL_PREFIX = 'noita-remover.spell-ban-pool.',
-  PERK_BAN_LIST_KEY = 'noita-remover.perk-ban-list-key',
   SPELL_BAN_LIST_KEY = 'noita-remover.spell-ban-list-key',
   WANT_TO_RELOAD_KEY = 'noita-remover.want-to-reload',
   PERK_GUI = {
@@ -416,41 +416,52 @@ local remove_random_perk_button_id = NewID()
 local perk_gui_rows = {}
 local perk_row = {}
 
-for i = 1, #noita_remover_perks do
-  table.insert(perk_row, {
-    icon_path = noita_remover_perks[i].perk_icon,
-    ban_image_id = NewID(),
-    ban_button_id = NewID(),
-    ban_key = VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id,
-    ban_state_name = VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].perk_icon,
-    banned_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id, true)
-      ban_count()
-      last_selected_perk_path = noita_remover_perks[i].perk_icon
-    end,
-    unbanned_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id, false)
-      ban_count()
-    end,
-    ban_pool_image_id = NewID(),
-    ban_pool_button_id = NewID(),
-    ban_pool_key = VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id,
-    ban_pool_state_name =
-        VALUES.PERK_BAN_PREFIX .. VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].perk_icon,
-    include_from_ban_pool_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id, true)
-    end,
-    exclude_from_ban_pool_fn = function()
-      ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id, false)
-    end,
-  })
-  if i % 6 == 0 then
-    table.insert(perk_gui_rows, perk_row)
-    perk_row = {}
+local function start_ban_perk_system()
+  perk_gui_rows = {}
+  perk_row = {}
+  local insert_count = 0
+  for i = 1, #noita_remover_perks do
+    if noita_remover_perks[i].id ~= nil or noita_remover_perks[i].perk_icon ~= nil then
+      table.insert(perk_row, {
+        icon_path = noita_remover_perks[i].perk_icon,
+        ban_image_id = NewID(),
+        ban_button_id = NewID(),
+        ban_key = VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id,
+        ban_state_name = VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].perk_icon,
+        banned_fn = function()
+          ModSettingSet(VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id, true)
+          ban_count()
+          last_selected_perk_path = noita_remover_perks[i].perk_icon
+        end,
+        unbanned_fn = function()
+          ModSettingSet(VALUES.PERK_BAN_PREFIX .. noita_remover_perks[i].id, false)
+          ban_count()
+        end,
+        ban_pool_image_id = NewID(),
+        ban_pool_button_id = NewID(),
+        ban_pool_key = VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id,
+        ban_pool_state_name =
+            VALUES.PERK_BAN_PREFIX .. VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i]
+            .perk_icon,
+        include_from_ban_pool_fn = function()
+          ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id, true)
+        end,
+        exclude_from_ban_pool_fn = function()
+          ModSettingSet(VALUES.PERK_BAN_POOL_PREFIX .. noita_remover_perks[i].id, false)
+        end,
+      })
+      insert_count = insert_count + 1
+    end
+    if insert_count % 6 == 0 then
+      table.insert(perk_gui_rows, perk_row)
+      perk_row = {}
+    end
   end
+  -- 最後に割り切れなかったperksを挿入する
+  table.insert(perk_gui_rows, perk_row)
 end
--- 最後に割り切れなかったperksを挿入する
-table.insert(perk_gui_rows, perk_row)
+
+start_ban_perk_system()
 
 
 local function perk_icon(gui)
@@ -497,7 +508,7 @@ local remove_random_spell_button_id = NewID()
 local spell_gui_rows = {}
 local spell_row = {}
 
-local function start_ban_item_system()
+local function start_ban_spell_system()
   spell_gui_rows = {}
   spell_row = {}
   local insert_count = 0
@@ -543,8 +554,7 @@ local function start_ban_item_system()
   table.insert(spell_gui_rows, spell_row)
 end
 
-start_ban_item_system()
-
+start_ban_spell_system()
 
 
 local function spell_icon(gui)
@@ -941,7 +951,8 @@ end
 
 local function want_to_refresh_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
   define_ban_list()
-  start_ban_item_system()
+  start_ban_perk_system()
+  start_ban_spell_system()
 end
 ---------------------------------------------------------
 

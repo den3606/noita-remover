@@ -1,10 +1,4 @@
 local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
-local Json = dofile_once("mods/noita-remover/files/scripts/lib/jsonlua/json.lua")
-
-
---HACK:
--- ここでコルーチンを走らせる。actionが増えたことを検知して、削除する仕組みを用意する。
--- MOD initでMODsettings経由でstopする。
 
 local want_to_refresh = ModSettingGet(VALUES.WANT_TO_RELOAD_KEY) or false
 if not want_to_refresh then
@@ -22,7 +16,6 @@ if not want_to_refresh then
     __newindex = function(t, key, value)
       local banned = ModSettingGet(VALUES.SPELL_BAN_PREFIX .. value.id) or false
       if not banned then
-        print("append spell: " .. value.id)
         rawset(t, key, value)
       end
     end
