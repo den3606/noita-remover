@@ -185,17 +185,19 @@ local function modding_setup_description()
       "2. Place noita-remover on top of all extension mods\n" ..
       "3. Click on \"Reload Perk/Spell list at the next new game\"\n" ..
       "4. Start New Game(Other mods are loaded at this time)\n" ..
-      "5. Click on \"Refresh Perk/Spell list\"\n\n" ..
-      "Once you have done everything, you will see the mod Perk/Spell\n"
+      "5. Click on \"Refresh Perk/Spell list\"\n \n" ..
+      "Once you have done everything, you will see the mod Perk/Spell\n \n" ..
+      "*If the behavior is suspicious, \nyou can press “Reset benefits and spells list” to initialize the list."
 
   local noita_remover_option_description_ja =
-      "MODのperk/spellをBANしたい場合の設定です。\n" ..
+      "MODのパーク/スペルをBANしたい場合の設定です。\n" ..
       "1. BANしたいパーク/スペルを含むMODをONにしてください\n" ..
       "2. ONにした全てのMODよりもnoita-removerを上に移動させてください\n" ..
       "3. 「Reload perk/spell list at the next new game」をクリックしてください\n" ..
       "4. 「新規ゲーム」を開始してください（このときに他のMODが読み込まれます）\n" ..
-      "5. 「Refresh perk/spell list」をクリックしてください\n\n" ..
-      "全てを実施し終えると、MODのアイテムが表示されます\n"
+      "5. 「Refresh perk/spell list」をクリックしてください\n \n" ..
+      "全てを実施し終えると、MODのアイテムが表示されます\n \n" ..
+      "* 挙動が怪しい場合は、「Reset perk/spell list」を押すと初期化が行えます"
 
   if language() == "en" then
     return noita_remover_option_description_en
@@ -516,7 +518,6 @@ local function start_ban_spell_system()
   local insert_count = 0
   for i = 1, #noita_remover_spells do
     if noita_remover_spells[i].id ~= nil or noita_remover_spells[i].sprite ~= nil then
-      print(noita_remover_spells[i].id)
       table.insert(spell_row, {
         ban_key = VALUES.SPELL_BAN_PREFIX .. noita_remover_spells[i].id,
         ban_image_id = NewID(),
@@ -956,6 +957,15 @@ local function want_to_refresh_gui_callback(mod_id, gui, in_main_menu, setting, 
   start_ban_perk_system()
   start_ban_spell_system()
 end
+
+local function reset_to_refresh_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  ModSettingSet(VALUES.PERK_BAN_LIST_KEY, "{}")
+  ModSettingSet(VALUES.SPELL_BAN_LIST_KEY, "{}")
+  define_ban_list()
+  start_ban_perk_system()
+  start_ban_spell_system()
+end
+
 ---------------------------------------------------------
 
 
@@ -1056,7 +1066,25 @@ mod_settings =
         change_fn = want_to_refresh_gui_callback,
       },
       {
-        id = "noita_remover_space_summy",
+        id = "noita_remover_space_summy_1",
+        ui_name = " ",
+        not_setting = true,
+      },
+      {
+        id = "reset_perk_and_spell_list_gui",
+        ui_name = "> !! Reset perk/spell list !!",
+        ui_description =
+        "Clears the park/spell list stored internally",
+        value_default = "dummy",
+        values = {
+          { "dummy", "" },
+          { "dummy", "" }
+        },
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+        change_fn = reset_to_refresh_gui_callback,
+      },
+      {
+        id = "noita_remover_space_summy_2",
         ui_name = " ",
         not_setting = true,
       },
