@@ -53,7 +53,8 @@ if #perk_list == 0 then
     stackable = STACKABLE_NO,
     usable_by_enemies = false,
   })
-else
+end
+if #perk_list > 1 then
   for index, perk in ipairs(perk_list) do
     if perk.id == "DUMMY" then
       table.remove(perk_list, index)

@@ -56,7 +56,8 @@ if #actions == 0 then
     action = function()
     end,
   })
-else
+end
+if #perk_list > 1 then
   for index, action in ipairs(actions) do
     if action.id == "DUMMY" then
       table.remove(actions, index)
