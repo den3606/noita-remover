@@ -2,7 +2,7 @@ local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 
 local want_to_refresh = ModSettingGet(VALUES.WANT_TO_RELOAD_KEY) or false
 if not want_to_refresh then
-  -- リフレッシュを希望していない場合は削除処理を実施する
+  -- BANが可能な場合は削除処理を実施する
   for i = #actions, 1, -1 do
     local spell = actions[i]
     local banned = ModSettingGet(VALUES.SPELL_BAN_PREFIX .. spell.id) or false
@@ -57,7 +57,7 @@ if #actions == 0 then
     end,
   })
 end
-if #perk_list > 1 then
+if #actions > 1 then
   for index, action in ipairs(actions) do
     if action.id == "DUMMY" then
       table.remove(actions, index)
