@@ -12,7 +12,7 @@ if not want_to_refresh then
     end
   end
 
-  -- index指定挿入
+  -- MODのitemは追加時を検知して、テーブルに入れないようにする
   local mt = {
     __newindex = function(t, key, value)
       local banned = ModSettingGet(VALUES.PERK_BAN_PREFIX .. value.id) or false
@@ -46,11 +46,17 @@ if #perk_list == 0 then
     id = "DUMMY",
     ui_name = "$noita_remover_perk_dummy",
     ui_description = "$noita_remover_perk_dummy",
-    ui_icon = "data/ui_gfx/inventory/item_bg_purchase_2.png",
-    perk_icon = "data/ui_gfx/inventory/item_bg_purchase_2.png",
+    sprite = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
+    perk_icon = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
     game_effect = "",
     particle_effect = "",
     stackable = STACKABLE_NO,
     usable_by_enemies = false,
   })
+else
+  for index, perk in ipairs(perk_list) do
+    if perk.id == "DUMMY" then
+      table.remove(perk_list, index)
+    end
+  end
 end

@@ -11,7 +11,7 @@ if not want_to_refresh then
     end
   end
 
-  -- index指定挿入
+  -- MODのitemは追加時を検知して、テーブルに入れないようにする
   local mt = {
     __newindex = function(t, key, value)
       local banned = ModSettingGet(VALUES.SPELL_BAN_PREFIX .. value.id) or false
@@ -45,8 +45,8 @@ if #actions == 0 then
     id = "DUMMY",
     name = "$noita_remover_spell_dummy",
     description = "$noita_remover_spell_dummy",
-    sprite = "data/ui_gfx/inventory/item_bg_purchase_2.png",
-    sprite_unidentified = "data/ui_gfx/inventory/item_bg_purchase_2.png",
+    sprite = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
+    sprite_unidentified = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
     type = ACTION_TYPE_PROJECTILE,
     spawn_level = "",
     spawn_probability = "",
@@ -56,4 +56,10 @@ if #actions == 0 then
     action = function()
     end,
   })
+else
+  for index, action in ipairs(actions) do
+    if action.id == "DUMMY" then
+      table.remove(actions, index)
+    end
+  end
 end
