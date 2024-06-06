@@ -1,0 +1,9 @@
+[submodule "files/scripts/lib/luanxml"]
+	path = files/scripts/lib/luanxml
+	url = git@github.com:zatherz/luanxml.git
+[submodule "files/scripts/lib/lume"]
+	path = files/scripts/lib/lume
+	url = git@github.com:rxi/lume.git
+[submodule "files/scripts/lib/jsonlua"]
+	path = files/scripts/lib/jsonlua
+	url = git@github.com:rxi/json.lua.git
