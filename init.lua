@@ -17,6 +17,8 @@ function OnModPreInit()
     ModSettingSet(VALUES.SPELL_BAN_LIST_KEY, "{}")
     ModSettingSet(VALUES.PERK_BAN_LIST_KEY, "{}")
   end
+
+  ModSettingSet(VALUES.IS_LOAD_BAN_LIST_AT_LEAST_ONE, false)
 end
 
 function OnModInit()

@@ -19,6 +19,7 @@ local VALUES = {
   WANT_TO_RELOAD_KEY = 'noita-remover.want-to-reload',
   ORIGINAL_PERK_KEY = 'noita-remover.original-perk-key',
   ORIGINAL_SPELL_KEY = 'noita-remover.original-spell-key',
+  IS_LOAD_BAN_LIST_AT_LEAST_ONE = 'noita-remover.is-load-ban-list-at-least-one',
   PERK_GUI = {
     BAN_SELECT = 'perk_ban',
     BAN_POOL = 'perk_ban_pool',
@@ -61,8 +62,9 @@ end
 -- so it should be kept separate from the original actions/perk_list that will be deleted.
 -- The update process is in the gun_action/perk_list file.
 local function define_ban_list()
-  local is_before_start = not GameHasFlagRun(VALUES.IS_GAME_START)
+  print('define_ban_list')
 
+  local is_before_start = not GameHasFlagRun(VALUES.IS_GAME_START)
 
   local encoded_spell_ban_list_json = ModSettingGet(VALUES.SPELL_BAN_LIST_KEY) or "{}"
   if encoded_spell_ban_list_json == "{}" or is_before_start then
@@ -74,10 +76,14 @@ local function define_ban_list()
     end
   else
     -- In game list
-    print(encoded_spell_ban_list_json)
     noita_remover_spells = Json.decode(encoded_spell_ban_list_json)
   end
 
+  for index, spell in ipairs(noita_remover_spells) do
+    if spell.id == "NOITA_REMOVER_DUMMY" then
+      table.remove(noita_remover_spells, index)
+    end
+  end
 
   local encoded_perk_ban_list_json = ModSettingGet(VALUES.PERK_BAN_LIST_KEY) or "{}"
   if encoded_perk_ban_list_json == "{}" or is_before_start then
@@ -89,11 +95,15 @@ local function define_ban_list()
     end
   else
     -- In game list
-    print(encoded_perk_ban_list_json)
     noita_remover_perks = Json.decode(encoded_perk_ban_list_json)
   end
-end
 
+  for index, perk in ipairs(noita_remover_perks) do
+    if perk.id == "NOITA_REMOVER_DUMMY" then
+      table.remove(noita_remover_perks, index)
+    end
+  end
+end
 define_ban_list()
 ---------------------------------------------------------
 
@@ -1161,6 +1171,16 @@ local main_menu_widget_info = {
   h = 0,
 }
 function ModSettingsGui(gui, in_main_menu)
+  -- メニュー画面を開いたとき、必ず1回ban_listを更新する
+  if not ModSettingGet(VALUES.IS_LOAD_BAN_LIST_AT_LEAST_ONE) then
+    print('\n\nload ban lint in modsettings gui\n\n')
+    define_ban_list()
+    start_ban_perk_system()
+    start_ban_spell_system()
+    ModSettingSet(VALUES.IS_LOAD_BAN_LIST_AT_LEAST_ONE, true)
+    ModSettingSet(VALUES.WANT_TO_RELOAD_KEY, false)
+  end
+
   mod_settings_gui(mod_id, mod_settings, gui, in_main_menu)
 
   -- HACK: 一時的にMainウィンドウと同じサイズの画像ウィンドウを生成して、メインウィンドウの大きさを取得する

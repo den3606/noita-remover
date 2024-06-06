@@ -42,7 +42,7 @@ end
 
 if #actions == 0 then
   table.insert(actions, {
-    id = "DUMMY",
+    id = "NOITA_REMOVER_DUMMY",
     name = "$noita_remover_spell_dummy",
     description = "$noita_remover_spell_dummy",
     sprite = "mods/noita-remover/files/ui_gfx/dummy_icon.png",

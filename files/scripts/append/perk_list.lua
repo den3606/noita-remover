@@ -42,7 +42,7 @@ end
 
 if #perk_list == 0 then
   table.insert(perk_list, {
-    id = "DUMMY",
+    id = "NOITA_REMOVER_DUMMY",
     ui_name = "$noita_remover_perk_dummy",
     ui_description = "$noita_remover_perk_dummy",
     ui_icon = "mods/noita-remover/files/ui_gfx/dummy_icon.png",
