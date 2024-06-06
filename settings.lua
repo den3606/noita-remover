@@ -62,8 +62,6 @@ end
 -- so it should be kept separate from the original actions/perk_list that will be deleted.
 -- The update process is in the gun_action/perk_list file.
 local function define_ban_list()
-  print('define_ban_list')
-
   local is_before_start = not GameHasFlagRun(VALUES.IS_GAME_START)
 
   local encoded_spell_ban_list_json = ModSettingGet(VALUES.SPELL_BAN_LIST_KEY) or "{}"
