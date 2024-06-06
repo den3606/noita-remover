@@ -229,25 +229,27 @@ local function option_description()
 end
 
 local function modding_setup_description()
-  local noita_remover_option_description_en =
+  local noita_remover_option_description_en = "==How to enable Modded Perks/Spells BAN==" .. "\n" ..
       "This is a setting if you want to ban a mod Perk/Spell.\n" ..
       "1. Turn on the mod that contains the Perk/Spell you want to BAN\n" ..
       "2. Place noita-remover on top of all extension mods\n" ..
-      "3. Click on \"Reload Perk/Spell list at the next new game\"\n" ..
-      "4. Start New Game(Other mods are loaded at this time)\n" ..
-      "5. Click on \"Refresh Perk/Spell list\"\n \n" ..
+      "3. Click on \"!! Reset perk/spell list !!\"\n" ..
+      "4. Click on \"Reload Perk/Spell list at the next new game\"\n" ..
+      "5. Start New Game(Other mods are loaded at this time)\n" ..
       "Once you have done everything, you will see the mod Perk/Spell\n \n" ..
-      "*If the behavior is suspicious, \nyou can press “Reset benefits and spells list” to initialize the list."
+      "* If the behavior is suspicious, \nyou can press \"!! Reset perk/spell list !!\" to initialize the list.\n" ..
+      "* If it does not work, start again from step 1."
 
-  local noita_remover_option_description_ja =
+  local noita_remover_option_description_ja = "==MOD の Perk/Spell BAN を有効にする方法==" .. "\n" ..
       "MODのパーク/スペルをBANしたい場合の設定です。\n" ..
       "1. BANしたいパーク/スペルを含むMODをONにしてください\n" ..
       "2. ONにした全てのMODよりもnoita-removerを上に移動させてください\n" ..
-      "3. 「Reload perk/spell list at the next new game」をクリックしてください\n" ..
-      "4. 「新規ゲーム」を開始してください（このときに他のMODが読み込まれます）\n" ..
-      "5. 「Refresh perk/spell list」をクリックしてください\n \n" ..
+      "3. 「!! Reset perk/spell list !!」をクリックしてください\n" ..
+      "4. 「Reload perk/spell list at the next new game」をクリックしてください\n" ..
+      "5. 「新規ゲーム」を開始してください（このときに他のMODが読み込まれます）\n" ..
       "全てを実施し終えると、MODのアイテムが表示されます\n \n" ..
-      "* 挙動が怪しい場合は、「Reset perk/spell list」を押すと初期化が行えます"
+      "* 挙動が怪しい場合は、「 !! Reset perk/spell list !!」を押すと初期化が行えます。\n" ..
+      "* うまくいかない場合は再度手順1から始めてみてください"
 
   if language() == "en" then
     return noita_remover_option_description_en
@@ -1092,31 +1094,6 @@ mod_settings =
     _folded = true,
     settings = {
       {
-        id = "want_to_reload_button",
-        ui_name = ">1. Reload perk/spell list at the next new game",
-        ui_description = "When you want to BAN Mod Perk/Spell, Click this and restart new game",
-        value_default = "dummy",
-        values = {
-          { "dummy", "" },
-          { "dummy", "" }
-        },
-        scope = MOD_SETTING_SCOPE_RUNTIME,
-        change_fn = want_to_reload_callback,
-      },
-      {
-        id = "refresh_perk_and_spell_list_gui",
-        ui_name = ">2. Refresh perk/spell list",
-        ui_description =
-        "If the perk/spell list has already been reloaded, Click this to refresh the GUI",
-        value_default = "dummy",
-        values = {
-          { "dummy", "" },
-          { "dummy", "" }
-        },
-        scope = MOD_SETTING_SCOPE_RUNTIME,
-        change_fn = want_to_refresh_gui_callback,
-      },
-      {
         id = "noita_remover_space_summy_1",
         ui_name = " ",
         not_setting = true,
@@ -1136,6 +1113,23 @@ mod_settings =
       },
       {
         id = "noita_remover_space_summy_2",
+        ui_name = " ",
+        not_setting = true,
+      },
+      {
+        id = "want_to_reload_button",
+        ui_name = ">Reload perk/spell list at the next new game",
+        ui_description = "When you want to BAN Mod Perk/Spell, Click this and restart new game",
+        value_default = "dummy",
+        values = {
+          { "dummy", "" },
+          { "dummy", "" }
+        },
+        scope = MOD_SETTING_SCOPE_RUNTIME,
+        change_fn = want_to_reload_callback,
+      },
+      {
+        id = "noita_remover_space_summy_3",
         ui_name = " ",
         not_setting = true,
       },
