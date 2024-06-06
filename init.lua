@@ -83,9 +83,8 @@ function OnWorldInitialized() -- This is called once the game world is initializ
       end
     end
     add_perks()
-
-    ModSettingSet(VALUES.WANT_TO_RELOAD_KEY, false)
   end
+  GameAddFlagRun(VALUES.IS_GAME_START)
 end
 
 function OnWorldPreUpdate() -- This is called every time the game is about to start updating the worl

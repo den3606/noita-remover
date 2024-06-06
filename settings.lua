@@ -1,12 +1,13 @@
 dofile("data/scripts/lib/mod_settings.lua")
-dofile_once("data/scripts/perks/perk_list.lua")
-dofile_once("data/scripts/gun/gun_actions.lua")
+dofile("data/scripts/perks/perk_list.lua")
+dofile("data/scripts/gun/gun_actions.lua")
 local Json = dofile_once("mods/noita-remover/files/scripts/lib/jsonlua/json.lua")
 
 ---------------------------------------------------------
 -- VALUES
 local VALUES = {
   MOD_NAME = 'noita-remover',
+  IS_GAME_START = 'noita-remover.is-game-start',
   GLOBAL_GUI_ID_KEY = 'noita-remover.global-gui-id-key',
   DANGER_ANNOUNCE = 'noita-remover.do-not-edit-in-game.',
   PERK_BAN_PREFIX = 'noita-remover.perk-ban.',
@@ -16,6 +17,8 @@ local VALUES = {
   SPELL_BAN_POOL_PREFIX = 'noita-remover.spell-ban-pool.',
   SPELL_BAN_LIST_KEY = 'noita-remover.spell-ban-list-key',
   WANT_TO_RELOAD_KEY = 'noita-remover.want-to-reload',
+  ORIGINAL_PERK_KEY = 'noita-remover.original-perk-key',
+  ORIGINAL_SPELL_KEY = 'noita-remover.original-spell-key',
   PERK_GUI = {
     BAN_SELECT = 'perk_ban',
     BAN_POOL = 'perk_ban_pool',
@@ -30,26 +33,63 @@ local VALUES = {
 
 
 ---------------------------------------------------------
+-- Save Original Spells/Perks
+local is_before_start = not GameHasFlagRun(VALUES.IS_GAME_START)
+if is_before_start then
+  local original_spells = {}
+  for _, action in ipairs(actions) do
+    table.insert(original_spells, { id = action.id, sprite = action.sprite })
+  end
+  ModSettingSet(VALUES.ORIGINAL_SPELL_KEY, Json.encode(original_spells))
+end
+
+if is_before_start then
+  local original_perks = {}
+  for _, perk in ipairs(perk_list) do
+    table.insert(original_perks, { id = perk.id, perk_icon = perk.perk_icon })
+  end
+  ModSettingSet(VALUES.ORIGINAL_PERK_KEY, Json.encode(original_perks))
+end
+---------------------------------------------------------
+
+
+
+---------------------------------------------------------
 -- BAN LIST
 -- NOTE:
 -- The ban list needs to retain content added by mods,
 -- so it should be kept separate from the original actions/perk_list that will be deleted.
 -- The update process is in the gun_action/perk_list file.
 local function define_ban_list()
+  local is_before_start = not GameHasFlagRun(VALUES.IS_GAME_START)
+
+
   local encoded_spell_ban_list_json = ModSettingGet(VALUES.SPELL_BAN_LIST_KEY) or "{}"
-  if encoded_spell_ban_list_json == "{}" then
-    noita_remover_spells = actions
+  if encoded_spell_ban_list_json == "{}" or is_before_start then
+    local original_spells = ModSettingGet(VALUES.ORIGINAL_SPELL_KEY)
+    if original_spells then
+      noita_remover_spells = Json.decode(original_spells)
+    else
+      noita_remover_spells = actions
+    end
   else
     -- In game list
+    print(encoded_spell_ban_list_json)
     noita_remover_spells = Json.decode(encoded_spell_ban_list_json)
   end
 
 
   local encoded_perk_ban_list_json = ModSettingGet(VALUES.PERK_BAN_LIST_KEY) or "{}"
-  if encoded_perk_ban_list_json == "{}" then
-    noita_remover_perks = perk_list
+  if encoded_perk_ban_list_json == "{}" or is_before_start then
+    local original_perks = ModSettingGet(VALUES.ORIGINAL_PERK_KEY)
+    if original_perks then
+      noita_remover_perks = Json.decode(original_perks)
+    else
+      noita_remover_perks = perk_list
+    end
   else
     -- In game list
+    print(encoded_perk_ban_list_json)
     noita_remover_perks = Json.decode(encoded_perk_ban_list_json)
   end
 end
@@ -455,10 +495,10 @@ local function start_ban_perk_system()
         end,
       })
       insert_count = insert_count + 1
-    end
-    if insert_count % 6 == 0 then
-      table.insert(perk_gui_rows, perk_row)
-      perk_row = {}
+      if insert_count % 6 == 0 then
+        table.insert(perk_gui_rows, perk_row)
+        perk_row = {}
+      end
     end
   end
   -- 最後に割り切れなかったperksを挿入する
@@ -547,10 +587,10 @@ local function start_ban_spell_system()
         end,
       })
       insert_count = insert_count + 1
-    end
-    if insert_count % 6 == 0 then
-      table.insert(spell_gui_rows, spell_row)
-      spell_row = {}
+      if insert_count % 6 == 0 then
+        table.insert(spell_gui_rows, spell_row)
+        spell_row = {}
+      end
     end
   end
   -- 最後に割り切れなかったspellsを挿入する
@@ -953,6 +993,7 @@ local function want_to_reload_callback(mod_id, gui, in_main_menu, setting, old_v
 end
 
 local function want_to_refresh_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  ModSettingSet(VALUES.WANT_TO_RELOAD_KEY, false)
   define_ban_list()
   start_ban_perk_system()
   start_ban_spell_system()
