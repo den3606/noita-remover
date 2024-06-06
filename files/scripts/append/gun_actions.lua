@@ -59,7 +59,7 @@ if #actions == 0 then
 end
 if #actions > 1 then
   for index, action in ipairs(actions) do
-    if action.id == "DUMMY" then
+    if action.id == "NOITA_REMOVER_DUMMY" then
       table.remove(actions, index)
     end
   end

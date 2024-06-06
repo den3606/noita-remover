@@ -55,7 +55,7 @@ if #perk_list == 0 then
 end
 if #perk_list > 1 then
   for index, perk in ipairs(perk_list) do
-    if perk.id == "DUMMY" then
+    if perk.id == "NOITA_REMOVER_DUMMY" then
       table.remove(perk_list, index)
     end
   end
