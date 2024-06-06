@@ -3,6 +3,7 @@ local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 -- NOTE:
 -- 初回の読み込みはNoitaの構築前に実施されるので、
 -- actionsのデータだけ先に吸い出す
+-- Useless Perk等、PostMOD以降で読み込ませているものは読めない
 local function add_perks()
   local Json = dofile_once("mods/noita-remover/files/scripts/lib/jsonlua/json.lua")
   local noita_remover_perks = Json.decode(ModSettingGet(VALUES.PERK_BAN_LIST_KEY) or "{}")

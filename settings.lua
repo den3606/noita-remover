@@ -1098,11 +1098,6 @@ mod_settings =
         not_setting = true,
       },
       {
-        id = "noita_remover_space_summy_3",
-        ui_name = " ",
-        not_setting = true,
-      },
-      {
         id = "noita_remover_mod_load_description",
         ui_name = modding_setup_description(),
         not_setting = true,
