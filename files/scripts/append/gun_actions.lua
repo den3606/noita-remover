@@ -1,5 +1,8 @@
 local VALUES = dofile_once("mods/noita-remover/files/scripts/variables.lua")
 
+-- NOTE:
+-- 初回の読み込みはNoitaの構築前に実施されるので、
+-- actionsのデータだけ先に吸い出す
 local function add_spells()
   local Json = dofile_once("mods/noita-remover/files/scripts/lib/jsonlua/json.lua")
   local noita_remover_spells = Json.decode(ModSettingGet(VALUES.SPELL_BAN_LIST_KEY) or "{}")
