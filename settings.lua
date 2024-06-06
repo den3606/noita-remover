@@ -163,7 +163,7 @@ local function is_multi_byte_language()
 end
 
 local function description()
-  local noita_remover_description_en = "DON'T FORGET TO PRESS THE ADAPT BUTTON UNDER SETTINGS!\n \n" ..
+  local noita_remover_description_en =
       "==Important==" .. "\n" ..
       "In some cases, \nwhen settings are changed during the game, spells suddenly become unavailable.\n" ..
       "Excluding all perks/spells is not expected on Noita's part.\n" ..
@@ -174,7 +174,7 @@ local function description()
       "Ban perks/spells are enabled when Noita initialized (start new game).\n" ..
       "Banned items will be darkened. Unbanned items will be brighter.\n \n"
 
-  local noita_remover_description_ja = "==はじめに==\n下にある「適応して戻る」ボタンを押すのを忘れないでください\n \n" ..
+  local noita_remover_description_ja =
       "== 重要事項 ==" .. "\n" ..
       "ゲーム中に設定を変更すると、スペルが突然使えなくなるケースがあります。\n" ..
       "全てのスペル、パークを除外されることを Noita 側は想定していません。\n" ..
@@ -999,17 +999,14 @@ local function switch_spell_gui_callback(mod_id, gui, in_main_menu, setting, old
   ModSettingSet('noita-remover.current_spell_gui', new_value)
 end
 local function want_to_reload_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  -- Reset Ban List
+  ModSettingSet(VALUES.PERK_BAN_LIST_KEY, "{}")
+  ModSettingSet(VALUES.SPELL_BAN_LIST_KEY, "{}")
   ModSettingSet(VALUES.WANT_TO_RELOAD_KEY, true)
 end
 
-local function want_to_refresh_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
-  ModSettingSet(VALUES.WANT_TO_RELOAD_KEY, false)
-  define_ban_list()
-  start_ban_perk_system()
-  start_ban_spell_system()
-end
-
 local function reset_to_refresh_gui_callback(mod_id, gui, in_main_menu, setting, old_value, new_value)
+  -- Reset Ban List
   ModSettingSet(VALUES.PERK_BAN_LIST_KEY, "{}")
   ModSettingSet(VALUES.SPELL_BAN_LIST_KEY, "{}")
   define_ban_list()
@@ -1165,12 +1162,10 @@ local main_menu_widget_info = {
 function ModSettingsGui(gui, in_main_menu)
   -- メニュー画面を開いたとき、必ず1回ban_listを更新する
   if not ModSettingGet(VALUES.IS_LOAD_BAN_LIST_AT_LEAST_ONE) then
-    print('\n\nload ban lint in modsettings gui\n\n')
     define_ban_list()
     start_ban_perk_system()
     start_ban_spell_system()
     ModSettingSet(VALUES.IS_LOAD_BAN_LIST_AT_LEAST_ONE, true)
-    ModSettingSet(VALUES.WANT_TO_RELOAD_KEY, false)
   end
 
   mod_settings_gui(mod_id, mod_settings, gui, in_main_menu)
