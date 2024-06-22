@@ -399,12 +399,6 @@ end
 -- settings.lua からファイル参照を行った場合、SteamのWorkshopで名前解決ができず参照できないためです。
 
 local Json = generate_json_lua()
--- TODO:
--- NoitaがSettings内でdofileを禁止にしたため、gun_actions.lua / perk_list.luaを取得できなくなった
--- 暫定対応としてから配列を渡している
--- ない場合はゲーム内で登録されるBAN LISTを取りに行くため、一度起動すれば動作する想定
-local actions = {}
-local perk_list = {}
 ---------------------------------------------------------
 -- VALUES
 local VALUES = {
@@ -435,28 +429,6 @@ local VALUES = {
 
 
 ---------------------------------------------------------
--- Save Original Spells/Perks
-local is_before_start = not GameHasFlagRun(VALUES.IS_GAME_START)
-if is_before_start then
-  local original_spells = {}
-  for _, action in ipairs(actions) do
-    table.insert(original_spells, { id = action.id, sprite = action.sprite })
-  end
-  ModSettingSet(VALUES.ORIGINAL_SPELL_KEY, Json.encode(original_spells))
-end
-
-if is_before_start then
-  local original_perks = {}
-  for _, perk in ipairs(perk_list) do
-    table.insert(original_perks, { id = perk.id, perk_icon = perk.perk_icon })
-  end
-  ModSettingSet(VALUES.ORIGINAL_PERK_KEY, Json.encode(original_perks))
-end
----------------------------------------------------------
-
-
-
----------------------------------------------------------
 -- BAN LIST
 -- NOTE:
 -- The ban list needs to retain content added by mods,
@@ -466,17 +438,8 @@ local function define_ban_list()
   local is_before_start = not GameHasFlagRun(VALUES.IS_GAME_START)
 
   local encoded_spell_ban_list_json = ModSettingGet(VALUES.SPELL_BAN_LIST_KEY) or "{}"
-  if encoded_spell_ban_list_json == "{}" or is_before_start then
-    local original_spells = ModSettingGet(VALUES.ORIGINAL_SPELL_KEY)
-    if original_spells then
-      noita_remover_spells = Json.decode(original_spells)
-    else
-      noita_remover_spells = actions
-    end
-  else
-    -- In game list
-    noita_remover_spells = Json.decode(encoded_spell_ban_list_json)
-  end
+  -- In game list
+  noita_remover_spells = Json.decode(encoded_spell_ban_list_json)
 
   for index, spell in ipairs(noita_remover_spells) do
     if spell.id == "NOITA_REMOVER_DUMMY" then
@@ -485,17 +448,8 @@ local function define_ban_list()
   end
 
   local encoded_perk_ban_list_json = ModSettingGet(VALUES.PERK_BAN_LIST_KEY) or "{}"
-  if encoded_perk_ban_list_json == "{}" or is_before_start then
-    local original_perks = ModSettingGet(VALUES.ORIGINAL_PERK_KEY)
-    if original_perks then
-      noita_remover_perks = Json.decode(original_perks)
-    else
-      noita_remover_perks = perk_list
-    end
-  else
-    -- In game list
-    noita_remover_perks = Json.decode(encoded_perk_ban_list_json)
-  end
+  -- In game list
+  noita_remover_perks = Json.decode(encoded_perk_ban_list_json)
 
   for index, perk in ipairs(noita_remover_perks) do
     if perk.id == "NOITA_REMOVER_DUMMY" then
@@ -566,6 +520,7 @@ end
 local function description()
   local noita_remover_description_en =
       "==Important==" .. "\n" ..
+      "If you are using the mod for the first time, \nplease start Noita once as you need to get the list of perks/spells.\n" ..
       "In some cases, \nwhen settings are changed during the game, spells suddenly become unavailable.\n" ..
       "Excluding all perks/spells is not expected on Noita's part.\n" ..
       "Please note that unforeseen events may occur.\n \n" ..
@@ -577,6 +532,8 @@ local function description()
 
   local noita_remover_description_ja =
       "== 重要事項 ==" .. "\n" ..
+      "MODを初めて利用する場合は、perks/spells のリストを取得する必要があります。\n" ..
+      "一度Noitaを起動してから開いてください。\n" ..
       "ゲーム中に設定を変更すると、スペルが突然使えなくなるケースがあります。\n" ..
       "全てのスペル、パークを除外されることを Noita 側は想定していません。\n" ..
       "想定外の事象が発生する可能性があることにご留意ください。\n \n" ..
